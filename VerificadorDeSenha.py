@@ -1,8 +1,8 @@
 simbolos = "!@#$%&*()-_=+[]{};:,.<>?/|"
 
 def verificar_forca_senha(senha: str) -> int: #pra quem nao souber, (: str) e (-> int) quer dizer: a senha será um texto e a função vai retornar um valor inteiro 
-    #Retorna uma pontuação que indica a força da senha.
-    #Quanto maior a pontuação, mais forte é a senha.
+    # retorna uma pontuação que indica a força da senha
+    # quanto maior a pontuação, mais forte é a senha
     
 
     global tipos_presentes #global tipos_presentes fala pro Python: “esta variável não é local”. Sem o global, o Python criaria uma variável nova que morre quando a função termina
