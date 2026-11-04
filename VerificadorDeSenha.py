@@ -54,31 +54,31 @@ def verificar_senha(senha: str) -> None:
     # verifica a força da senha
     pontuacao = verificar_forca_senha(senha)
     if pontuacao == 0:
-        print("A senha é muito fraca.")
+        print("A senha é muito fraca. \n")
         if tipos_presentes < 4:
-            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número.")
+            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. \n")
     elif pontuacao == 1:
-        print("A senha é fraca.")
+        print("A senha é fraca. \n")
         if tipos_presentes < 4:
-            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número.")
+            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. \n")
     elif pontuacao == 2:
-        print("A senha é mediana.")
+        print("A senha é mediana. \n")
         if tipos_presentes < 4:
-            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número.")
+            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. \n")
     elif pontuacao == 3:
-        print("A senha não é tão forte.")
+        print("A senha não é tão forte. \n")
         if tipos_presentes < 4:
-            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número.")
+            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. \n")
     elif pontuacao == 4:
-        print("A senha não é tão forte.")
+        print("A senha não é tão forte. \n")
         if tipos_presentes < 4:
-            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número.")
+            print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. \n")
     else:
-        print("A senha é extremamente forte.")
+        print("A senha é extremamente forte. \n")
 
 
 while True:
-    print("Cadastre aqui sua senha com os seguintes criétios: \n"
+    print("Cadastre aqui sua senha com os seguintes critérios: \n"
       "         *Ao menos 8 digitos\n"
       "         *Ao menos uma letra MAIÚSCULA\n"
       "         *Ao menos um número\n"
