@@ -5,7 +5,7 @@ def verificar_forca_senha(senha: str) -> int: #pra quem nao souber, (: str) e (-
     #Quanto maior a pontuação, mais forte é a senha.
     
 
-    global tipos_presentes
+    global tipos_presentes #global tipos_presentes fala pro Python: “esta variável não é local”. Sem o global, o Python criaria uma variável nova que morre quando a função termina
     pontuacao = 0
     tipos_presentes = 0
     # verifica se a senha contém ao menos um caractere de cada classe exigida
