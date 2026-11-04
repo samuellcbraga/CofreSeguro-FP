@@ -40,11 +40,11 @@ def verificar_forca_senha(senha: str) -> int: #pra quem nao souber, (: str) e (-
 
 
 def verificar_senha(senha: str) -> None:
-    #verifica a senha em vários aspectos e imprime uma mensagem sobre sua força.
+    #verifica a senha em vários aspectos e imprime uma mensagem sobre sua força
 
     #lê a lista de senhas comuns do arquivo
-    with open("senhas_comuns.txt", "r") as arquivo:
-        senhas_comuns = set(arquivo.read().splitlines())
+    with open("senhas_comuns.txt", "r") as arquivo: #"with ... as arquivo" garante que o arquivo é fechado sozinho ao sair do bloco \\ arquivo.read() lê todo o conteúdo como um único texto 
+        senhas_comuns = set(arquivo.read().splitlines()) #set() transforma a lista em um conjunto
 
     # verifica se a senha é comum demais
     if senha in senhas_comuns:
