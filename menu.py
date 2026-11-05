@@ -1,4 +1,5 @@
 import crud
+import VerificadorDeSenha
 
 while True:
     print("----------------- GERENCIADOR DE SENHAS ----------------")
@@ -9,12 +10,21 @@ while True:
         case 1:
             servico = input("Qual serviço que terá sua senha registrada?: ")
             user = input("Qual o seu nome de usuário ou e-mail?: ")
-            senha = input("Qual a sua senha?: ")
-            obs = input("Alguma observação?: ")
-            #antes de add a senha vai ter a verificaçao de segurança
-            #isso é so um wip, ainda vai ser separado por categorias, criptografado, etc
-            #será que é o caso de usar um dicionário?
-            crud.cadastrar(f"Serviço: {servico}, Usuário/E-mail: {user}, Senha: {senha}, Observação: {obs}")
+            senha = input("Cadastre aqui sua senha com os seguintes critérios: \n"
+                        "         *Ao menos 8 digitos\n"
+                        "         *Ao menos uma letra MAIÚSCULA\n"
+                        "         *Ao menos um número\n"
+                        "         *Ao menos um caractere especial(!@#$%¨&)\n"
+                        "Escreva aqui: ")
+            #antes de add a senha tem a verificaçao de segurança
+            pontuacao = VerificadorDeSenha.verificar_forca_senha(senha)
+            VerificadorDeSenha.verificar_senha(senha)
+            if pontuacao <= 4:
+                print("Sua senha não pode ser cadastrada. Por favor, cadastre outra senha.")
+            else:               
+                obs = input("Alguma observação?: ")
+                #criptografa a senha aqui
+                crud.cadastrar(f"Serviço: {servico}, Usuário/E-mail: {user}, Senha: {senha}, Observação: {obs}")
         case 2:
             #talvez possa perguntar de qual categoria/usuario gostaria de ver as senhas
             #por enquanto vai ver todas
@@ -28,9 +38,15 @@ while True:
                 servico = input("Serviço: ")
                 user = input("Usuário/E-mail: ")
                 senha = input("Senha: ")
-                obs = input("Observação: ")
-                novo = f"Serviço: {servico}, Usuário/E-mail: {user}, Senha: {senha}, Observação: {obs}"
-                crud.atualizar(antigo, novo)
+                pontuacao = VerificadorDeSenha.verificar_forca_senha(senha)
+                VerificadorDeSenha.verificar_senha(senha)
+                if pontuacao <= 4:
+                    print("Erro: Tentou cadastrar uma senha fraca. Operação cancelada.")
+                else:
+                    obs = input("Observação: ")
+                    #criptografa a senha aqui
+                    novo = f"Serviço: {servico}, Usuário/E-mail: {user}, Senha: {senha}, Observação: {obs}"
+                    crud.atualizar(antigo, novo)
             else:
                 print("Número inválido.")
         case 4:

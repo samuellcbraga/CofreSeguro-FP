@@ -49,6 +49,7 @@ def verificar_senha(senha: str) -> None:
     # verifica se a senha é comum demais
     if senha in senhas_comuns:
         print("A senha é muito comum. A força da sua senha é 0.")
+        print("Sua senha não foi cadastrada. Por favor, cadastre outra senha.")
         return
 
     # verifica a força da senha
@@ -77,11 +78,3 @@ def verificar_senha(senha: str) -> None:
         print("A senha é extremamente forte. \n")
 
 
-while True:
-    print("Cadastre aqui sua senha com os seguintes critérios: \n"
-      "         *Ao menos 8 digitos\n"
-      "         *Ao menos uma letra MAIÚSCULA\n"
-      "         *Ao menos um número\n"
-      "         *Ao menos um caractere especial(!@#$%¨&)\n")
-    senha = input("Digite sua senha: ")
-    verificar_senha(senha)
