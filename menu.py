@@ -6,6 +6,7 @@ import VerificadorDeSenha
 import cofre
 
 
+
 ## Igual ao input, mas não aceita ";" (é o separador dos campos no arquivo)
 def entrada(mensagem: str) -> str:
     """_summary_
@@ -76,6 +77,8 @@ def entrar():
                 print("Senha mestra incorreta.")
                 tentativas += 1
             return False
+
+
 
     print("Primeira execução: crie sua senha mestra.")
     senha1 = input("Nova senha mestra: ")
