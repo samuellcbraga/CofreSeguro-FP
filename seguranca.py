@@ -34,6 +34,8 @@ def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = True) -> bytes:
     :type passphrase: str
     :param is_slow: Criptografia deve ser lenta? normalmente irá ser rápida
     :type is_slow: bool, optional
+    :return: Dados criptografados em bytes com header apropriado para descriptografia
+    :rtype: bytes
 
     :Example:
     >>> encrypt("mensagem secreta".encode(),"senha")
