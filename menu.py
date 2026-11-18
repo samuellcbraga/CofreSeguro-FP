@@ -53,7 +53,7 @@ while True:
                         "         *Ao menos um caractere especial(!@#$%¨&)\n"
                         "Escreva aqui: ")
             #antes de add a senha tem a verificaçao de segurança
-            pontuacao = VerificadorDeSenha.verificar_forca_senha(senha)
+            pontuacao = VerificadorDeSenha.verificar_forca_senha(senha)[0]
             VerificadorDeSenha.verificar_senha(senha)
             if not VerificadorDeSenha.atende_exigencia(pontuacao, categorias.exigenciaDa(categoria)):
                 print(f"A categoria {categoria} exige senha no mínimo {categorias.exigenciaDa(categoria)}.")

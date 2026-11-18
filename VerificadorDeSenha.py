@@ -1,15 +1,13 @@
 simbolos = "!@#$%&*()-_=+[]{};:,.<>?/|"
 
-def ler_senhas_comuns() -> set: #lê a lista de senhas comuns do arquivo
+def ler_senhas_comuns() -> set[str]: #lê a lista de senhas comuns do arquivo
     with open("senhas_comuns.txt", "r") as arquivo: #"with ... as arquivo" garante que o arquivo é fechado sozinho ao sair do bloco \\ arquivo.read() lê todo o conteúdo como um único texto
         return set(arquivo.read().splitlines()) #set() transforma a lista em um conjunto
 
-def verificar_forca_senha(senha: str) -> int: #pra quem nao souber, (: str) e (-> int) quer dizer: a senha será um texto e a função vai retornar um valor inteiro 
+def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (: str) e (-> int) quer dizer: a senha será um texto e a função vai retornar um valor inteiro 
     # retorna uma pontuação que indica a força da senha
     # quanto maior a pontuação, mais forte é a senha
     
-
-    global tipos_presentes #global tipos_presentes fala pro Python: “esta variável não é local”. Sem o global, o Python criaria uma variável nova que morre quando a função termina
     pontuacao = 0
     tipos_presentes = 0
     if senha in ler_senhas_comuns(): #senha comum vale 0, não importa quão "forte" ela pareça
@@ -30,7 +28,7 @@ def verificar_forca_senha(senha: str) -> int: #pra quem nao souber, (: str) e (-
         tipos_presentes += 1
 
     if tipos_presentes < 4:
-        return pontuacao
+        return pontuacao,tipos_presentes
 
     # verifica se a senha é longa o bastante
     if len(senha) >= 8:
@@ -42,13 +40,13 @@ def verificar_forca_senha(senha: str) -> int: #pra quem nao souber, (: str) e (-
     if len(senha) >= 20:        #coloquei quatro if's separados para que a pontuação seja acumulada conforme o tamanho for aumentando
         pontuacao += 1      
 
-    return pontuacao
+    return pontuacao,tipos_presentes
 
 
 def verificar_senha(senha: str) -> None:
     #verifica a senha em vários aspectos e imprime uma mensagem sobre sua força
 
-    senhas_comuns = ler_senhas_comuns()
+    senhas_comuns: set[str] = ler_senhas_comuns()
 
     # verifica se a senha é comum demais
     if senha in senhas_comuns:
@@ -57,32 +55,32 @@ def verificar_senha(senha: str) -> None:
         return
 
     # verifica a força da senha
-    pontuacao = verificar_forca_senha(senha)
-    if pontuacao == 0:
+    pontuacao_senha_atual, tipos_presentes_senha_atual= verificar_forca_senha(senha)
+    if pontuacao_senha_atual == 0:
         print("A senha é muito fraca. \n")
-        if tipos_presentes < 4:
+        if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
-    elif pontuacao == 1:
+    elif pontuacao_senha_atual == 1:
         print("A senha é fraca. \n")
-        if tipos_presentes < 4:
+        if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
-    elif pontuacao == 2:
+    elif pontuacao_senha_atual == 2:
         print("A senha é mediana. \n")
-        if tipos_presentes < 4:
+        if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
-    elif pontuacao == 3:
+    elif pontuacao_senha_atual == 3:
         print("A senha não é tão forte. \n")
-        if tipos_presentes < 4:
+        if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
-    elif pontuacao == 4:
+    elif pontuacao_senha_atual == 4:
         print("A senha não é tão forte. \n")
-        if tipos_presentes < 4:
+        if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
     else:
         print("A senha é extremamente forte. \n")
 
     #o tamanho só conta pontos quando a senha já tem os 4 tipos de caractere
-    if tipos_presentes == 4 and len(senha) < 20:
+    if tipos_presentes_senha_atual == 4 and len(senha) < 20:
         print(f"Sua senha tem {len(senha)} caracteres. Senhas maiores ganham mais pontos (a partir de 8, 12, 16 e 20 caracteres). \n")
 
 
@@ -103,7 +101,7 @@ def explicar_o_que_falta(senha: str) -> None:
 #classificação usada para comparar com a exigência mínima de cada categoria
 NIVEIS = ["fraca", "média", "forte"]
 
-def classificar(pontuacao: int) -> str:
+def classificar(pontuacao) -> str:
     #segue as mensagens acima: 0 e 1 = fraca | 2 a 4 = mediana / não tão forte | 5 ou mais = extremamente forte
     if pontuacao >= 5:
         return "forte"
