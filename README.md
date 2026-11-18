@@ -80,3 +80,13 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
   - Responsável por organizar a criptografia e descriptografia do sistema como um todo;
   - Limpeza geral do código como um todo atendendo boas práticas (atomização de funções, notação de tipos, uso de docstrings, etc.);
   - Documentação do README.md (manual escolhido).
+ 
+- José Guilherme Burégio: 
+  - Adicionou o módulo VerificadorDeSenha.py e senhas_comuns.txt;
+  - Responsável por organizar e estruturar o verificador de senha usado pelo programa;
+  - Limpeza e condensação do verificador de força da senha.
+  
+ 
+
+ 
+
