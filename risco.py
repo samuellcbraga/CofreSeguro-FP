@@ -20,7 +20,7 @@ def agruparPorSenha() -> dict[str, str]:
 def avisarRepetidas() -> None:
     grupos: dict[str,str] = agruparPorSenha()
     achou: bool = False
-    for senha in grupos.keys():
+    for senha in grupos:  # noqa: PLC0206
         if len(grupos[senha].split(", ")) > 1:
             achou = True
             print("Mesma senha nos serviços: " + ", ".join(grupos[senha]))
@@ -57,7 +57,7 @@ def relatorio() -> None:
     #conta quantas senhas aparecem em mais de um lugar
     repetidas = 0
     grupos: dict[str, str] = agruparPorSenha()
-    for senha in grupos.keys():
+    for senha in grupos:  # noqa: PLC0206
         if len(grupos[senha]) > 1:
             repetidas += 1
 
