@@ -10,7 +10,7 @@ SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM = 4, 1024 * 1024, 4  # Valore
 FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM = 4, 256 * 1024, 4  # Valores para criptografia rapida (mas menos segura), numero de iteracoes, memoria usada, paralelismo, respectivamente
 
 # Funcao serve para derivar chave a partir de uma senha, um salt (aleatorio) e um bool que diz se vai ser rapida ou lenta
-def _derive_key(passphrase: str, salt: bytes, is_slow: bool = False) -> bytes:  # funcao de derivacao de chave nao deve ser chamada sozinha, representado pelo _
+def _derive_key(passphrase: str, salt: bytes, is_slow: bool) -> bytes:  # funcao de derivacao de chave nao deve ser chamada sozinha, representado pelo _
     if is_slow:
         return hash_secret_raw(
             passphrase.encode(), salt, SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM, hash_len=32, type=Type.ID
@@ -20,7 +20,7 @@ def _derive_key(passphrase: str, salt: bytes, is_slow: bool = False) -> bytes:  
             passphrase.encode(), salt, FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM, hash_len=32, type=Type.ID
         )
 
-def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = True) -> bytes:
+def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
 
     """
 
