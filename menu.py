@@ -77,19 +77,16 @@ def entrar():
                 tentativas += 1
             return False
 
-        print("Primeira execução: crie sua senha mestra.")
-        senha1 = input("Nova senha mestra: ")
-        senha2 = input("Repita a senha mestra: ")
-        while senha1 == "" or senha1 != senha2:
+    print("Primeira execução: crie sua senha mestra.")
+    senha1 = input("Nova senha mestra: ")
+    senha2 = input("Repita a senha mestra: ")
+    while senha1 == "" or senha1 != senha2:
             print("As senhas não conferem. Tente de novo.")
             senha1 = input("Nova senha mestra: ")
             senha2 = input("Repita a senha mestra: ")
             cofre.definirSenha(senha1)
             crud.gravarLinhas([])
-        return True
-
-    if not entrar():
-        print("Acesso negado.")
+    return True
 
 
 while True:
