@@ -57,7 +57,7 @@ def relatorio() -> None:
     #conta quantas senhas aparecem em mais de um lugar
     repetidas = 0
     grupos: dict[str, str] = agruparPorSenha()
-    for senha in grupos:
+    for senha in grupos.keys():
         if len(grupos[senha]) > 1:
             repetidas += 1
 
