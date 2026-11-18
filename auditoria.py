@@ -1,5 +1,5 @@
-from io import TextIOWrapper
 from datetime import datetime
+from io import TextIOWrapper
 
 ARQUIVOLOG = "auditoria.txt"
 

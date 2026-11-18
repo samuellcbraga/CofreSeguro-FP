@@ -9,7 +9,7 @@ def entrada(mensagem: str) -> str:
     texto: str = input(mensagem)
     while ";" in texto:
         print('O caractere ";" não é permitido. Tente de novo.')
-        texto: str = input(mensagem)
+        entrada(mensagem)
     return texto
 
 ## Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
@@ -17,16 +17,16 @@ def lerNumero(mensagem: str) -> int:
     texto: str = input(mensagem).strip()
     while not texto.isdigit(): ## isdigit() é True só se o texto tiver apenas algarismos
         print("Digite apenas números.")
-        texto: str = input(mensagem).strip()
+        lerNumero(mensagem)
     return int(texto)
 
 ## Mostra as categorias e retorna o nome da escolhida
-def escolherCategoria() -> int:
+def escolherCategoria() -> str:
     linhas: list[str] = categorias.listar()
     numero: int = lerNumero("Qual a categoria?: ")
     while not 1 <= numero <= len(linhas):
         print("Número inválido.")
-        numero: int = lerNumero("Qual a categoria?: ")
+        escolherCategoria()
     return linhas[numero - 1].split(";")[0]
 
 def lerExigencia() -> str:
@@ -45,7 +45,7 @@ while True:
         case 1:
             servico: str = entrada("Qual serviço que terá sua senha registrada?: ")
             user: str = entrada("Qual o seu nome de usuário ou e-mail?: ")
-            categoria: int = escolherCategoria()
+            categoria: str = escolherCategoria()
             senha: str = entrada("Cadastre aqui sua senha com os seguintes critérios: \n"
                         "         *Ao menos 8 digitos\n"
                         "         *Ao menos uma letra MAIÚSCULA\n"
@@ -53,7 +53,7 @@ while True:
                         "         *Ao menos um caractere especial(!@#$%¨&)\n"
                         "Escreva aqui: ")
             #antes de add a senha tem a verificaçao de segurança
-            pontuacao: int = VerificadorDeSenha.verificar_forca_senha(senha)[0]
+            pontuacao: tuple[int,int] = VerificadorDeSenha.verificar_forca_senha(senha)
             VerificadorDeSenha.verificar_senha(senha)
             if not VerificadorDeSenha.atende_exigencia(pontuacao, categorias.exigenciaDa(categoria)):
                 print(f"A categoria {categoria} exige senha no mínimo {categorias.exigenciaDa(categoria)}.")
@@ -63,8 +63,8 @@ while True:
                 #criptografa a senha aqui
 
                 #avisa se a senha ta sendo usada em outro canto
-                usadas: str = risco.servicosComMesmaSenha(senha)
-                if len(usadas) > 0:
+                usadas: str | None = risco.servicosComMesmaSenha(senha)
+                if usadas:
                     print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
                 crud.cadastrar(f"{servico};{user};{senha};{categoria};{obs}")
                 auditoria.registrar("CADASTRO", servico)
@@ -79,22 +79,22 @@ while True:
             if 1 <= numero <= len(linhas):
                 antigo: str = linhas[numero - 1]
                 servicoAntigo: str = antigo.split(";")[0]
-                servico: str = entrada("Serviço: ")
-                user: str = entrada("Usuário/E-mail: ")
-                categoria: int = escolherCategoria()
-                senha: str = entrada("Senha: ")
-                pontuacao: int = VerificadorDeSenha.verificar_forca_senha(senha)[0]
+                novo_servico: str = entrada("Serviço: ")
+                novo_user: str = entrada("Usuário/E-mail: ")
+                nova_categoria: str = escolherCategoria()
+                nova_senha: str = entrada("Senha: ")
+                nova_pontuacao: int = VerificadorDeSenha.verificar_forca_senha(senha)[0]
                 VerificadorDeSenha.verificar_senha(senha)
                 if not VerificadorDeSenha.atende_exigencia(pontuacao, categorias.exigenciaDa(categoria)):
                     print(f"A categoria {categoria} exige senha no mínimo {categorias.exigenciaDa(categoria)}.")
                     print("Erro: Tentou cadastrar uma senha fraca. Operação cancelada.")
                 else:
-                    obs: str = entrada("Observação: ")
+                    nova_obs: str = entrada("Observação: ")
                     #criptografa a senha aqui
                     
                     #avisa se a senha ta sendo usada em outro canto
                     usadas = risco.servicosComMesmaSenha(senha)
-                    if len(usadas) > 0:
+                    if usadas:
                         print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
 
                     novo: str = f"{servico};{user};{senha};{categoria};{obs}"
@@ -105,10 +105,10 @@ while True:
                 print("Número inválido.")
         case 4:
             crud.listar()
-            linhas: list[str] = crud.lerLinhas()
-            numero: int = lerNumero("Qual o número do registro que deseja excluir?: ")
-            if 1 <= numero <= len(linhas):
-                crud.excluir(linhas[numero - 1])
+            linhas_removiveis: list[str] = crud.lerLinhas()
+            numero_removido: int = lerNumero("Qual o número do registro que deseja excluir?: ")
+            if 1 <= numero <= len(linhas_removiveis):
+                crud.excluir(linhas_removiveis[numero_removido - 1])
                 auditoria.registrar("EXCLUSÃO", servico)
             else:
                 print("Número inválido.")

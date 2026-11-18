@@ -11,7 +11,7 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (
     pontuacao: int = 0
     tipos_presentes: int = 0
     if senha in ler_senhas_comuns(): #senha comum vale 0, não importa quão "forte" ela pareça
-        return pontuacao
+        return (pontuacao, tipos_presentes)
     # verifica se a senha contém ao menos um caractere de cada classe exigida
     if any(c.isupper() for c in senha): #for c in senha percorre a senha letra por letra, e "c" é cada caractere
         pontuacao += 1                  #c.isupper() é True se o caractere é uma letra maiúscula
@@ -101,17 +101,17 @@ def explicar_o_que_falta(senha: str) -> None:
 #classificação usada para comparar com a exigência mínima de cada categoria
 NIVEIS: list[str] = ["fraca", "média", "forte"]
 
-def classificar(pontuacao: int) -> str:
+def classificar(pontuacao: tuple[int,int]) -> str:
     #segue as mensagens acima: 0 e 1 = fraca | 2 a 4 = mediana / não tão forte | 5 ou mais = extremamente forte
-    if pontuacao >= 5:
+    if pontuacao[0] >= 5:
         return "forte"
-    if pontuacao >= 2:
+    if pontuacao[0] >= 2:
         return "média"
     return "fraca"
 
-def atende_exigencia(pontuacao: int, exigencia: str) -> bool:
+def atende_exigencia(pontuacao: tuple[int,int], exigencia: str) -> bool:
     #pontuação 0 (senha comum ou muito fraca) nunca é aceita, em nenhuma categoria
-    if pontuacao == 0:
+    if pontuacao[0] == 0:
         return False
     #NIVEIS.index transforma o nome em posição (fraca = 0, média = 1, forte = 2) para poder comparar
     return NIVEIS.index(classificar(pontuacao)) >= NIVEIS.index(exigencia)

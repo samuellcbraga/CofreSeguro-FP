@@ -4,13 +4,13 @@ import struct
 from argon2.low_level import Type, hash_secret_raw
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-HEADER = struct.Struct(">?16s12s")  # Struct armazena 3 valores: um booleano, uma string de 16 caracteres e outra string de 12 caracteres, sao elas is slow?, salt e nonce
+HEADER = struct.Struct(">?16s12s2s")  # Struct armazena 4 valores: um booleano, uma string de 16 caracteres e outra string de 12 caracteres, sao elas is slow?, salt, nonce e últimos dígitos da senha
 
 SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM = 4, 1024 * 1024, 4  # Valores para criptografia lenta (mas mais segura), numero de iteracoes, memoria usada, paralelismo, respectivamente
 FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM = 4, 256 * 1024, 4  # Valores para criptografia rapida (mas menos segura), numero de iteracoes, memoria usada, paralelismo, respectivamente
 
 # Funcao serve para derivar chave a partir de uma senha, um salt (aleatorio) e um bool que diz se vai ser rapida ou lenta
-def _derive_key(passphrase: str, salt: bytes, is_slow: bool) -> bytes:  # funcao de derivacao de chave nao deve ser chamada sozinha, representado pelo _
+def _derivar_chave(passphrase: str, salt: bytes, is_slow: bool) -> bytes:  # funcao de derivacao de chave nao deve ser chamada sozinha, representado pelo _
     if is_slow:
         return hash_secret_raw(
             passphrase.encode(), salt, SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM, hash_len=32, type=Type.ID
@@ -20,7 +20,7 @@ def _derive_key(passphrase: str, salt: bytes, is_slow: bool) -> bytes:  # funcao
             passphrase.encode(), salt, FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM, hash_len=32, type=Type.ID
         )
 
-def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
+def criptografar(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
 
     """
 
@@ -37,21 +37,17 @@ def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
     :return: Dados criptografados em bytes com header apropriado para descriptografia
     :rtype: bytes
 
-    :Example:
-    >>> encrypt("mensagem secreta".encode(),"senha")
-    b'\x01M\x1a\xf9_L\x13um\xf1\r\xa3cU\x08\xddwm`\xe7\xf0\x0cl_\x07\xcf\xa7\xe6\x86J\x03\xd8\x86\x1c\xb3\xba\xc5\xd8\x920aJm\x02\xdbG\xab\x9b7Jv>\x10\x85\x85Du\x01\x8e\\W'
-
     """
 
     salt, nonce = os.urandom(16), os.urandom(12)
-    header = HEADER.pack(is_slow, salt, nonce)
+    header: bytes = HEADER.pack(is_slow, salt, nonce, passphrase[-1:-2:])
     if is_slow:
-        key = _derive_key(passphrase, salt, is_slow)
+        key: bytes = _derivar_chave(passphrase, salt, is_slow)
     else:
-        key = _derive_key(passphrase, salt, is_slow)
+        key = _derivar_chave(passphrase, salt, is_slow)
     return header + AESGCM(key).encrypt(nonce, plaintext, header)
 
-def decrypt(blob: bytes, passphrase: str) -> bytes:
+def descriptografar(blob: bytes, passphrase: str) -> bytes:
 
     """
 
@@ -67,20 +63,34 @@ def decrypt(blob: bytes, passphrase: str) -> bytes:
     :rtype: bytes
     :raises ValueError: se o arquivo não tiver espaço de header ou se tiver uma lentidão não definida no header
 
-    :Example:
-    >>> decrypt(b'\x01M\x1a\xf9_L\x13um\xf1\r\xa3cU\x08\xddwm`\xe7\xf0\x0cl_\x07\xcf\xa7\xe6\x86J\x03\xd8\x86\x1c\xb3\xba\xc5\xd8\x920aJm\x02\xdbG\xab\x9b7Jv>\x10\x85\x85Du\x01\x8e\\W',"senha")
-    b'mensagem secreta'
-
     """
 
     if len(blob) < HEADER.size:
         raise ValueError("arquivo muito curto")
     header, ciphertext = blob[: HEADER.size], blob[HEADER.size :]
-    is_slow, salt, nonce = HEADER.unpack(header)
+    is_slow, salt, nonce, _digitos_senha = HEADER.unpack(header)
     if is_slow:
-        key = _derive_key(passphrase, salt, is_slow)
+        key: bytes = _derivar_chave(passphrase, salt, is_slow)
     elif not is_slow:
-        key = _derive_key(passphrase, salt, is_slow)
+        key = _derivar_chave(passphrase, salt, is_slow)
     else:
         raise ValueError("Lentidão não definida!")
     return AESGCM(key).decrypt(nonce, ciphertext, header)  # Retorna um erro InvalidTag independente de se foi por senha incorreta ou por arquivo adulterado
+
+def mostrar_final(blob: bytes) -> bytes:
+    """Mostra os dois dígitos da senha criptografada sem precisar descriptografar
+    
+    A função apenas printa o final da senha, detectando quando o dado passado é o banco.
+
+    :param blob: Senha a ter final mostrado
+    :type blob: bytes
+    :return: Final da senha em bytes
+    :rtype: bytes
+    :raises ValueError: se blob passado for de criptografia lenta (indica que não foi passada uma senha)
+    """
+    header = blob[: HEADER.size]
+    _is_slow, _salt, _nonce, digitos_senha = HEADER.unpack(header)
+    if digitos_senha == b';;':
+        raise ValueError
+    else:
+        return digitos_senha

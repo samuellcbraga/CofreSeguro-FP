@@ -1,27 +1,27 @@
-from typing import Any
 from datetime import datetime
+
 import crud
 import VerificadorDeSenha
 
+
 #monta um dicionario onde a chave é a senha e o valor é a lista de servicos que usam essa senha
-def agruparPorSenha() -> dict[str,str]:
+def agruparPorSenha() -> dict[str, str]:
     grupos: dict[str, str] = {}
-    for linha in crud.lerLinhas():              
+    for linha in crud.lerLinhas():
         celula: list[str] = linha.split(";")
         if len(celula) == 6:        #ignora registros em outro formato
             servico: str = celula[0]
             senha: str = celula[2]           #a senha é a 3a celula do registro
-            if senha not in grupos:
-                grupos[senha] = []       #primeira vez que a senha aparece, entao ele cria a lista
-            grupos[senha].append(servico)
+            if senha in grupos:
+               grupos[senha] = grupos[senha] + ", " + servico
     return grupos
 
 #se uma senha tem mais de um servico na lista, ela tá repetida
 def avisarRepetidas() -> None:
-    grupos: dict[str, str] = agruparPorSenha()
+    grupos: dict[str,str] = agruparPorSenha()
     achou: bool = False
-    for senha in grupos:
-        if len(grupos[senha]) > 1:
+    for senha, key in grupos:
+        if len(grupos[senha].split(", ")) > 1:
             achou = True
             print("Mesma senha nos serviços: " + ", ".join(grupos[senha]))
     if not achou:
@@ -29,11 +29,9 @@ def avisarRepetidas() -> None:
 
 #antes de salvar uma senha, avisa se ela ja ta sendo usada em outro canto
 #NAO TO SABENDO ATIVAR ESSE MEGA PODER LÁ NO MENU!!!!!!!!!!!!!
-def servicosComMesmaSenha(senha: str) -> str:
+def servicosComMesmaSenha(senha: str) -> str | None:
     grupos: dict[str, str] = agruparPorSenha()
-    if senha in grupos:
-        return grupos[senha]
-    return []
+    return grupos.get(senha)
 
 def relatorio() -> None:
     comuns: set[str] = VerificadorDeSenha.ler_senhas_comuns()
