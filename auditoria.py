@@ -26,7 +26,7 @@ def listar() -> None:
         return
     print("----------- LOG DE AUDITORIA -----------")
     for linha in linhas:
-        celulas = linha.split(";")
+        celulas: list[str] = linha.split(";")
         if len(celulas) == 3:  
             data, operacao, servico = celulas
             print(f"{data} | {operacao} | {servico}")
