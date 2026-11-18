@@ -20,7 +20,7 @@ def agruparPorSenha() -> dict[str, str]:
 def avisarRepetidas() -> None:
     grupos: dict[str,str] = agruparPorSenha()
     achou: bool = False
-    for senha, key in grupos:
+    for senha in grupos.keys():
         if len(grupos[senha].split(", ")) > 1:
             achou = True
             print("Mesma senha nos serviços: " + ", ".join(grupos[senha]))
