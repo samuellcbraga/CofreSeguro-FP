@@ -1,22 +1,24 @@
 SIMBOLOS: str = "!@#$%&*()-_=+[]{};:,.<>?/|"
 
 def ler_senhas_comuns() -> set[str]: 
-    """_summary_
+    """Função feita para que, posteriormente, a senha registrada percorra linha por linha desse .txt e, caso seja idêntica a uma das senhas listadas, não seja registrada
 
     Returns:
-        set[str]: _description_
+        set[str]: As senhas comuns encontradas no arquivo em forma de string, sem repetições e sem as quebras de linha
     """
     with open("senhas_comuns.txt", "r") as arquivo: 
         return set(arquivo.read().splitlines())
 
 def verificar_forca_senha(senha: str) -> tuple[int,int]:   
-    """_summary_
+    """Retorna uma pontuação que indica a força da senha. Quão maior a pontuação, mais forte é a senha.
+    Percorre cada caractere da senha e devolve True caso atenda aos requisitos obrigatórios da senha (ter letra maiúscula, número etc).
+    Conforme a senha é percorrida e os tipos presentes forem confirmados, recebe uma pontuação acumulativa
 
     Args:
-        senha (str): _description_
+        senha (str): recebe a senha
 
     Returns:
-        tuple[int,int]: _description_
+        tuple[int,int]: depois de analisar a senha, devolve dois inteiros que servem como variáveis acumuladoras: pontuacao e tipos_presentes
     """
     # retorna uma pontuação que indica a força da senha//quanto maior a pontuação, mais forte é a senha
     
@@ -60,10 +62,14 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]:
 
 
 def verificar_senha(senha: str) -> None:
-    """_summary_
+    """Verifica a força da senha.
+    Primeiramente iremos analisar se ela tá listada em "senhas_comuns" (se estiver lá a senha não será listada); Caso contrário ela será analisada:
+    1. calcula a pontuação e devolve o nível de força
+    2. caso falte algum tipo de caractere, será retornado uma mensagem explicada na função explicar_o_que_falta
+
 
     Args:
-        senha (str): _description_
+        senha (str): recebe a senha que será analisada
     """
     #verifica a senha em vários aspectos e imprime uma mensagem sobre sua força
 
@@ -102,10 +108,10 @@ def verificar_senha(senha: str) -> None:
 
 
 def explicar_o_que_falta(senha: str) -> None:
-    """_summary_
+    """Explique o que falta, percorrendo a senha caractere por caractere. Lista os tipos de caractere exigidos
 
     Args:
-        senha (str): _description_
+        senha (str): senha a ser analisada
     """
     #diz exatamente o que está faltando
     print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. Falta:")
@@ -121,16 +127,18 @@ def explicar_o_que_falta(senha: str) -> None:
 
 
 #classificação usada para comparar com a exigência mínima de cada categoria
+#fraca == 0//média == 1//forte == 2
 NIVEIS: list[str] = ["fraca", "média", "forte"]
 
 def classificar(pontuacao: tuple[int,int]) -> str:
-    """_summary_
+    """Classifica a pontuação de uma senha em "fraca", "média" ou "forte".
 
     Args:
-        pontuacao (tuple[int,int]): _description_
+        pontuacao (tuple[int,int]): Recebe a tupla (pontuacao, tipos_presentes) e devolve a pontuação
 
     Returns:
-        str: _description_
+        str: O nível da senha: "fraca" (0 ou 1), "média" (2 a 4) ou "forte" (5 ou mais)
+
     """
     #segue as mensagens acima: 0 e 1 = fraca | 2 a 4 = mediana / não tão forte | 5 ou mais = extremamente forte
     if pontuacao[0] >= 5:
@@ -140,14 +148,14 @@ def classificar(pontuacao: tuple[int,int]) -> str:
     return "fraca"
 
 def atende_exigencia(pontuacao: tuple[int,int], exigencia: str) -> bool:
-    """_summary_
+    """aqui verificamos se a senha atinge o nível mínimo requerido pela escolha feita em menu.py
 
     Args:
-        pontuacao (tuple[int,int]): _description_
-        exigencia (str): _description_
+        pontuacao (tuple[int,int]): a tupla (pontuacao,tipos_presentes) é devolvida pela função verificar_forca_senha
+        exigencia (str): nível mínimo aceito baseado na escolha feita no menu.py, sendo elas: fraca, média ou forte
 
     Returns:
-        bool: _description_
+        bool: True se o nível da senha for igual ou superior ao exigido; False se for inferior ou se a pontuação for 0
     """
     #pontuação 0 (senha comum ou muito fraca) nunca é aceita, em nenhuma categoria
     if pontuacao[0] == 0:
