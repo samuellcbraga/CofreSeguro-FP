@@ -13,15 +13,34 @@ FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM = 4, 256 * 1024, 4  # Valores
 def _derive_key(passphrase: str, salt: bytes, is_slow: bool = False) -> bytes:  # funcao de derivacao de chave nao deve ser chamada sozinha, representado pelo _
     if is_slow:
         return hash_secret_raw(
-            passphrase.encode(), salt, slow_time_cost, slow_memory_cost, slow_parallelism, hash_len=32, type=Type.ID
+            passphrase.encode(), salt, SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM, hash_len=32, type=Type.ID
         )
     else:
         return hash_secret_raw(
-            passphrase.encode(), salt, fast_time_cost, fast_memory_cost, fast_parallelism, hash_len=32, type=Type.ID
+            passphrase.encode(), salt, FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM, hash_len=32, type=Type.ID
         )
 
-# Funcao de criptografar dados, recebe o que deve ser criptografado (em bytes, arquivo deve ser acessado com "rb" inves de "r" e string precisa de .encode()), senha e velocidade
-def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
+def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = True) -> bytes:
+
+    """
+
+    Criptografa dado passado de forma segura.
+
+    Para usar os dados passados, a função precisa receber o dado a ser criptografado e a senha a ser usada, além de especificar se a criptografia será lenta (destinada ao arquivo do banco) ou rápida (uso padrão, feita para categorias de senha ou senhas individuais, a depender da necessidade). Usa-se "rb" ou "wb" no comando 'open' para ler um arquivo e retornar o conteúdo em bytes, para uma string deve-se usar a função [string].encode().
+
+    :param plaintext: O dado a ser criptografado em bytes
+    :type plaintext: bytes
+    :param passphrase: Senha a ser usada para criptografia
+    :type passphrase: str
+    :param is_slow: Criptografia deve ser lenta? normalmente irá ser rápida
+    :type is_slow: bool, optional
+
+    :Example:
+    >>> encrypt("mensagem secreta".encode(),"senha")
+    b'\x01M\x1a\xf9_L\x13um\xf1\r\xa3cU\x08\xddwm`\xe7\xf0\x0cl_\x07\xcf\xa7\xe6\x86J\x03\xd8\x86\x1c\xb3\xba\xc5\xd8\x920aJm\x02\xdbG\xab\x9b7Jv>\x10\x85\x85Du\x01\x8e\\W'
+
+    """
+
     salt, nonce = os.urandom(16), os.urandom(12)
     header = HEADER.pack(is_slow, salt, nonce)
     if is_slow:
@@ -30,8 +49,25 @@ def encrypt(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
         key = _derive_key(passphrase, salt, is_slow)
     return header + AESGCM(key).encrypt(nonce, plaintext, header)
 
-# Funcao de descriptografar, recebe apenas os bytes criptografados (de novo, arquivo deve ser acessado com "rb" ou "wb" e string precisa de .encode()), e senha, dados para descriptografia estao no HEADER
 def decrypt(blob: bytes, passphrase: str) -> bytes:
+
+    """
+
+    Descriptografa dados passados usando a senha.
+
+    A função apenas precisa dos dados criptografados (blob) e da senha. Dados devem estar em bytes, senha deve ser passada em string. Todos os dados de descriptografia se encontram no header dos arquivos criptografados, então ele automaticamente identifica se é criptografia rápida ou lenta.
+
+    :param blob: Dados criptografados em bytes
+    :type blob: bytes
+    :param passphrase: A senha para descriptografia
+    :type passphrase: str
+
+    :Example:
+    >>> decrypt(b'\x01M\x1a\xf9_L\x13um\xf1\r\xa3cU\x08\xddwm`\xe7\xf0\x0cl_\x07\xcf\xa7\xe6\x86J\x03\xd8\x86\x1c\xb3\xba\xc5\xd8\x920aJm\x02\xdbG\xab\x9b7Jv>\x10\x85\x85Du\x01\x8e\\W',"senha")
+    b'mensagem secreta'
+
+    """
+
     if len(blob) < HEADER.size:
         raise ValueError("arquivo muito curto")
     header, ciphertext = blob[: HEADER.size], blob[HEADER.size :]
@@ -43,4 +79,3 @@ def decrypt(blob: bytes, passphrase: str) -> bytes:
     else:
         raise ValueError("Lentidão não definida!")
     return AESGCM(key).decrypt(nonce, ciphertext, header)  # Retorna um erro InvalidTag independente de se foi por senha incorreta ou por arquivo adulterado
-
