@@ -3,6 +3,7 @@ import categorias
 import crud
 import risco
 import VerificadorDeSenha
+import cofre
 
 
 ## Igual ao input, mas não aceita ";" (é o separador dos campos no arquivo)
@@ -62,6 +63,34 @@ def lerExigencia() -> str:
         print("Digite fraca, média ou forte.")
         exigencia = input("Exigência mínima de força da senha (fraca, média ou forte): ").strip().lower()
     return exigencia
+
+def entrar():
+    if cofre.existe(crud.ARQUIVOSENHAS):
+        tentativas=0
+        while tentativas < 3:
+            cofre.definirSenha(input("Senha mestra: "))
+            try:
+                crud.lerLinhas()
+                return True
+            except Exception:
+                print("Senha mestra incorreta.")
+                tentativas += 1
+            return False
+
+        print("Primeira execução: crie sua senha mestra.")
+        senha1 = input("Nova senha mestra: ")
+        senha2 = input("Repita a senha mestra: ")
+        while senha1 == "" or senha1 != senha2:
+            print("As senhas não conferem. Tente de novo.")
+            senha1 = input("Nova senha mestra: ")
+            senha2 = input("Repita a senha mestra: ")
+            cofre.definirSenha(senha1)
+            crud.gravarLinhas([])
+        return True
+
+    if not entrar():
+        print("Acesso negado.")
+
 
 while True:
     print("----------------- GERENCIADOR DE SENHAS ----------------")
