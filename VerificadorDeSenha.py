@@ -1,15 +1,15 @@
 SIMBOLOS: str = "!@#$%&*()-_=+[]{};:,.<>?/|"
 
-def ler_senhas_comuns() -> set[str]: #lê a lista de senhas comuns do arquivo
+def ler_senhas_comuns() -> set[str]: 
     """_summary_
 
     Returns:
         set[str]: _description_
     """
-    with open("senhas_comuns.txt", "r") as arquivo: #"with ... as arquivo" garante que o arquivo é fechado sozinho ao sair do bloco \\ arquivo.read() lê todo o conteúdo como um único texto
-        return set(arquivo.read().splitlines()) #set() transforma a lista em um conjunto
+    with open("senhas_comuns.txt", "r") as arquivo: 
+        return set(arquivo.read().splitlines())
 
-def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (: str) e (-> int) quer dizer: a senha será um texto e a função vai retornar um valor inteiro 
+def verificar_forca_senha(senha: str) -> tuple[int,int]:   
     """_summary_
 
     Args:
@@ -18,18 +18,21 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (
     Returns:
         tuple[int,int]: _description_
     """
-    # retorna uma pontuação que indica a força da senha
-    # quanto maior a pontuação, mais forte é a senha
+    # retorna uma pontuação que indica a força da senha//quanto maior a pontuação, mais forte é a senha
     
     pontuacao: int = 0
     tipos_presentes: int = 0
+
     if senha in ler_senhas_comuns(): #senha comum vale 0, não importa quão "forte" ela pareça
         return (pontuacao, tipos_presentes)
-    # verifica se a senha contém ao menos um caractere de cada classe exigida
-    if any(c.isupper() for c in senha): #for c in senha percorre a senha letra por letra, e "c" é cada caractere
-        pontuacao += 1                  #c.isupper() é True se o caractere é uma letra maiúscula
-        tipos_presentes += 1            #any() recebe todos esses True/False e devolve True >se pelo menos um for True<. Ele para na primeira maiúscula que achar
-        #Se tem maiúscula, soma 1 na pontuação e marca tipos_presentes (variável q criei pra contar caractere especial, letra maiuscula etc)
+
+
+    
+    # agora vamos verificar se a senha contém ao menos um caractere de cada classe exigida
+
+    if any(c.isupper() for c in senha): #c.isupper() é True se o caractere é uma letra maiúscula
+        pontuacao += 1                  #any() recebe todos esses True/False e devolve True >se pelo menos um for True<. Ele para na primeira maiúscula que achar
+        tipos_presentes += 1            
     if any(c.islower() for c in senha):  
         pontuacao += 1                  #o que disse antes vale pra todo o resto, mudando só a função abordada
         tipos_presentes += 1
@@ -43,14 +46,14 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (
     if tipos_presentes < 4:
         return pontuacao,tipos_presentes
 
-    # verifica se a senha é longa o bastante
+    # verifica se a senha é longa o bastante//sistema de pontuação é acumulativo nessa etapa
     if len(senha) >= 8:
         pontuacao += 1
     if len(senha) >= 12:
         pontuacao += 1
     if len(senha) >= 16:
         pontuacao += 1
-    if len(senha) >= 20:        #coloquei quatro if's separados para que a pontuação seja acumulada conforme o tamanho for aumentando
+    if len(senha) >= 20:        
         pontuacao += 1      
 
     return pontuacao,tipos_presentes
@@ -72,7 +75,7 @@ def verificar_senha(senha: str) -> None:
         print("Sua senha não foi cadastrada. Por favor, cadastre outra senha.")
         return
 
-    # verifica a força da senha
+    # verifica a força da senha e imprime o que falta para ela ser considerada forte
     pontuacao_senha_atual, tipos_presentes_senha_atual= verificar_forca_senha(senha)
     if pontuacao_senha_atual == 0:
         print("A senha é muito fraca. \n")
@@ -93,7 +96,7 @@ def verificar_senha(senha: str) -> None:
     else:
         print("A senha é extremamente forte. \n")
 
-    #o tamanho só conta pontos quando a senha já tem os 4 tipos de caractere
+    #o tamanho só conta pontos quando a senha já tem os 4 tipos de caracteres
     if tipos_presentes_senha_atual == 4 and len(senha) < 20:
         print(f"Sua senha tem {len(senha)} caracteres. Senhas maiores ganham mais pontos (a partir de 8, 12, 16 e 20 caracteres). \n")
 
@@ -104,7 +107,7 @@ def explicar_o_que_falta(senha: str) -> None:
     Args:
         senha (str): _description_
     """
-    #em vez de repetir todos os critérios, diz exatamente o que está faltando
+    #diz exatamente o que está faltando
     print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. Falta:")
     if not any(c.isupper() for c in senha):
         print("   - uma letra maiúscula")
