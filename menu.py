@@ -5,32 +5,32 @@ import risco
 import auditoria
 
 ## Igual ao input, mas não aceita ";" (é o separador dos campos no arquivo)
-def entrada(mensagem):
-    texto = input(mensagem)
+def entrada(mensagem: str) -> str:
+    texto: str = input(mensagem)
     while ";" in texto:
         print('O caractere ";" não é permitido. Tente de novo.')
-        texto = input(mensagem)
+        texto: str = input(mensagem)
     return texto
 
 ## Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
-def lerNumero(mensagem):
-    texto = input(mensagem).strip()
+def lerNumero(mensagem: str) -> int:
+    texto: str = input(mensagem).strip()
     while not texto.isdigit(): ## isdigit() é True só se o texto tiver apenas algarismos
         print("Digite apenas números.")
-        texto = input(mensagem).strip()
+        texto: str = input(mensagem).strip()
     return int(texto)
 
 ## Mostra as categorias e retorna o nome da escolhida
-def escolherCategoria():
-    linhas = categorias.listar()
-    numero = lerNumero("Qual a categoria?: ")
+def escolherCategoria() -> int:
+    linhas: list[str] = categorias.listar()
+    numero: int = lerNumero("Qual a categoria?: ")
     while not 1 <= numero <= len(linhas):
         print("Número inválido.")
-        numero = lerNumero("Qual a categoria?: ")
+        numero: int = lerNumero("Qual a categoria?: ")
     return linhas[numero - 1].split(";")[0]
 
-def lerExigencia():
-    exigencia = input("Exigência mínima de força da senha (fraca, média ou forte): ").strip().lower()
+def lerExigencia() -> str:
+    exigencia: str = input("Exigência mínima de força da senha (fraca, média ou forte): ").strip().lower()
     while exigencia not in VerificadorDeSenha.NIVEIS:
         print("Digite fraca, média ou forte.")
         exigencia = input("Exigência mínima de força da senha (fraca, média ou forte): ").strip().lower()
@@ -40,30 +40,30 @@ while True:
     print("----------------- GERENCIADOR DE SENHAS ----------------")
     print("Opções: ")
     print("[1] - Adicionar nova senha\n[2] - Visualizar senhas\n[3] - Editar informações\n[4] - Excluir senhas\n[5] - Assistente de IA\n[6] - Ver último cadastro\n[7] - Revelar uma senha\n[8] - Categorias\n[9] - Encerrar programa\n[10] - Ver locais com mesma senha\n[11] - Ver senhas em risco\n[12] - Registro de auditoria")
-    escolha = lerNumero("\nO que deseja fazer?: ")
+    escolha: int = lerNumero("\nO que deseja fazer?: ")
     match escolha:
         case 1:
-            servico = entrada("Qual serviço que terá sua senha registrada?: ")
-            user = entrada("Qual o seu nome de usuário ou e-mail?: ")
-            categoria = escolherCategoria()
-            senha = entrada("Cadastre aqui sua senha com os seguintes critérios: \n"
+            servico: str = entrada("Qual serviço que terá sua senha registrada?: ")
+            user: str = entrada("Qual o seu nome de usuário ou e-mail?: ")
+            categoria: int = escolherCategoria()
+            senha: str = entrada("Cadastre aqui sua senha com os seguintes critérios: \n"
                         "         *Ao menos 8 digitos\n"
                         "         *Ao menos uma letra MAIÚSCULA\n"
                         "         *Ao menos um número\n"
                         "         *Ao menos um caractere especial(!@#$%¨&)\n"
                         "Escreva aqui: ")
             #antes de add a senha tem a verificaçao de segurança
-            pontuacao = VerificadorDeSenha.verificar_forca_senha(senha)[0]
+            pontuacao: int = VerificadorDeSenha.verificar_forca_senha(senha)[0]
             VerificadorDeSenha.verificar_senha(senha)
             if not VerificadorDeSenha.atende_exigencia(pontuacao, categorias.exigenciaDa(categoria)):
                 print(f"A categoria {categoria} exige senha no mínimo {categorias.exigenciaDa(categoria)}.")
                 print("Sua senha não pode ser cadastrada. Por favor, cadastre outra senha.")
             else:
-                obs = entrada("Alguma observação?: ")
+                obs: str = entrada("Alguma observação?: ")
                 #criptografa a senha aqui
 
                 #avisa se a senha ta sendo usada em outro canto
-                usadas = risco.servicosComMesmaSenha(senha)
+                usadas: str = risco.servicosComMesmaSenha(senha)
                 if len(usadas) > 0:
                     print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
                 crud.cadastrar(f"{servico};{user};{senha};{categoria};{obs}")
@@ -74,22 +74,22 @@ while True:
             crud.listar()
         case 3:
             crud.listar()
-            linhas = crud.lerLinhas()
-            numero = lerNumero("Qual o número do registro que deseja editar?: ")
+            linhas: list[str] = crud.lerLinhas()
+            numero: int = lerNumero("Qual o número do registro que deseja editar?: ")
             if 1 <= numero <= len(linhas):
-                antigo = linhas[numero - 1]
-                servicoAntigo = antigo.split(";")[0]
-                servico = entrada("Serviço: ")
-                user = entrada("Usuário/E-mail: ")
-                categoria = escolherCategoria()
-                senha = entrada("Senha: ")
-                pontuacao = VerificadorDeSenha.verificar_forca_senha(senha)
+                antigo: str = linhas[numero - 1]
+                servicoAntigo: str = antigo.split(";")[0]
+                servico: str = entrada("Serviço: ")
+                user: str = entrada("Usuário/E-mail: ")
+                categoria: int = escolherCategoria()
+                senha: str = entrada("Senha: ")
+                pontuacao: int = VerificadorDeSenha.verificar_forca_senha(senha)[0]
                 VerificadorDeSenha.verificar_senha(senha)
                 if not VerificadorDeSenha.atende_exigencia(pontuacao, categorias.exigenciaDa(categoria)):
                     print(f"A categoria {categoria} exige senha no mínimo {categorias.exigenciaDa(categoria)}.")
                     print("Erro: Tentou cadastrar uma senha fraca. Operação cancelada.")
                 else:
-                    obs = entrada("Observação: ")
+                    obs: str = entrada("Observação: ")
                     #criptografa a senha aqui
                     
                     #avisa se a senha ta sendo usada em outro canto
@@ -97,7 +97,7 @@ while True:
                     if len(usadas) > 0:
                         print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
 
-                    novo = f"{servico};{user};{senha};{categoria};{obs}"
+                    novo: str = f"{servico};{user};{senha};{categoria};{obs}"
 
                     crud.atualizar(antigo, novo)
                     auditoria.registrar("EDIÇÃO", servicoAntigo)
@@ -105,8 +105,8 @@ while True:
                 print("Número inválido.")
         case 4:
             crud.listar()
-            linhas = crud.lerLinhas()
-            numero = lerNumero("Qual o número do registro que deseja excluir?: ")
+            linhas: list[str] = crud.lerLinhas()
+            numero: int = lerNumero("Qual o número do registro que deseja excluir?: ")
             if 1 <= numero <= len(linhas):
                 crud.excluir(linhas[numero - 1])
                 auditoria.registrar("EXCLUSÃO", servico)
@@ -121,7 +121,7 @@ while True:
             linhas = crud.lerLinhas()
             numero = lerNumero("Qual o número do registro que deseja revelar a senha?: ")
             if 1 <= numero <= len(linhas) and len(linhas[numero - 1].split(";")) == 6:
-                celulas = linhas[numero - 1].split(";")
+                celulas: list[str] = linhas[numero - 1].split(";")
                 print(f"Senha: {celulas[2]}")  ## a senha é o 3º campo do registro
                 auditoria.registrar("REVELOU SENHA", celulas[0])
             else:
@@ -129,7 +129,7 @@ while True:
         case 8:
             categorias.listar()
             if input("Deseja cadastrar uma categoria ou alterar uma exigência? (s/n): ").strip().lower() == "s":
-                nome = entrada("Nome da categoria: ").strip().lower()
+                nome: str = entrada("Nome da categoria: ").strip().lower()
                 categorias.cadastrar(nome, lerExigencia())
         case 9:
             print("Obrigado por usar nosso gerenciador de senhas!")

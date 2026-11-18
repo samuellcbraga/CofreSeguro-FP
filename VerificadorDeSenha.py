@@ -1,4 +1,4 @@
-simbolos = "!@#$%&*()-_=+[]{};:,.<>?/|"
+SIMBOLOS: str = "!@#$%&*()-_=+[]{};:,.<>?/|"
 
 def ler_senhas_comuns() -> set[str]: #lê a lista de senhas comuns do arquivo
     with open("senhas_comuns.txt", "r") as arquivo: #"with ... as arquivo" garante que o arquivo é fechado sozinho ao sair do bloco \\ arquivo.read() lê todo o conteúdo como um único texto
@@ -8,8 +8,8 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (
     # retorna uma pontuação que indica a força da senha
     # quanto maior a pontuação, mais forte é a senha
     
-    pontuacao = 0
-    tipos_presentes = 0
+    pontuacao: int = 0
+    tipos_presentes: int = 0
     if senha in ler_senhas_comuns(): #senha comum vale 0, não importa quão "forte" ela pareça
         return pontuacao
     # verifica se a senha contém ao menos um caractere de cada classe exigida
@@ -23,7 +23,7 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (
     if any(c.isdigit() for c in senha):
         pontuacao += 1
         tipos_presentes += 1
-    if any(c in simbolos for c in senha):
+    if any(c in SIMBOLOS for c in senha):
         pontuacao += 1
         tipos_presentes += 1
 
@@ -93,15 +93,15 @@ def explicar_o_que_falta(senha: str) -> None:
         print("   - uma letra minúscula")
     if not any(c.isdigit() for c in senha):
         print("   - um número")
-    if not any(c in simbolos for c in senha):
+    if not any(c in SIMBOLOS for c in senha):
         print("   - um caractere especial")
     print()
 
 
 #classificação usada para comparar com a exigência mínima de cada categoria
-NIVEIS = ["fraca", "média", "forte"]
+NIVEIS: list[str] = ["fraca", "média", "forte"]
 
-def classificar(pontuacao) -> str:
+def classificar(pontuacao: int) -> str:
     #segue as mensagens acima: 0 e 1 = fraca | 2 a 4 = mediana / não tão forte | 5 ou mais = extremamente forte
     if pontuacao >= 5:
         return "forte"
