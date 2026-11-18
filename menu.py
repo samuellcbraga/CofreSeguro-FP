@@ -88,6 +88,9 @@ def entrar():
             crud.gravarLinhas([])
     return True
 
+if not entrar():
+    print("Acesso negado.")
+    exit()
 
 while True:
     print("----------------- GERENCIADOR DE SENHAS ----------------")
@@ -175,8 +178,13 @@ while True:
             numero = lerNumero("Qual o número do registro que deseja revelar a senha?: ")
             if 1 <= numero <= len(linhas) and len(linhas[numero - 1].split(";")) == 6:
                 celulas: list[str] = linhas[numero - 1].split(";")
-                print(f"Senha: {celulas[2]}")  ## a senha é o 3º campo do registro
-                auditoria.registrar("REVELOU SENHA", celulas[0])
+                tentativa = input("Use a senha mestra para revelar: ")
+                if cofre.senhaCorreta(tentativa):
+                    print(f"Senha: {celulas[2]}")  ## a senha é o 3º campo do registro
+                    auditoria.registrar("REVELOU SENHA", celulas[0])
+                else:
+                    print("Senha incorreta.")
+                    auditoria.registrar("TENTATIVA NEGADA", celulas[0])
             else:
                 print("Número inválido.")
         case 8:

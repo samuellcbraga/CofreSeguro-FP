@@ -1,19 +1,17 @@
 from datetime import datetime
+import cofre
 
 ARQUIVOLOG = "auditoria.txt"
 
 #cada linha do log: data e hora;operação;serviço
 def registrar(operacao, servico) -> None:
-    """_summary_
-
-    Args:
-        operacao (_type_): _description_
-        servico (_type_): _description_
+    """registra as operações realizadas pelo usuário
     """
     data: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     try:
-        with open(ARQUIVOLOG, "a", encoding="utf-8") as arquivo:
-            arquivo.write(f"{data};{operacao};{servico}\n")
+        linhas = cofre.lerCifrado(ARQUIVOLOG) #destranca o log
+        linhas.append(f"{data};{operacao};{servico}") #coloca a nova operacao
+        cofre.gravarCifrado(ARQUIVOLOG, linhas) #tranca dnv
     except OSError: #o programa não pode quebrar por causa do log
         print("Aviso: não foi possível gravar no log de auditoria.")
 
@@ -22,8 +20,7 @@ def listar() -> None:
     """
     open(ARQUIVOLOG, "a", encoding="utf-8").close() #cria o arquivo vazio se ainda não existir
     try:
-        with open(ARQUIVOLOG, "r", encoding="utf-8") as arquivo:
-            linhas: list[str] = arquivo.read().splitlines()
+        linhas = cofre.lerCifrado(ARQUIVOLOG)  #destranca o log
     except OSError:
         print("Não foi possível ler o log de auditoria.")
         return
