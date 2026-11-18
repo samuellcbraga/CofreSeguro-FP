@@ -1,21 +1,36 @@
 ##ARQUIVOSENHAS pode ser temporário
 from datetime import datetime
+
 ARQUIVOSENHAS = "Lista_senhas.txt"
 ## Cada registro é uma linha com os campos separados por ";":
 ## serviço;usuário;senha;categoria;observação;data
 ## Lê o arquivo e retorna uma Lista com os registros
 def lerLinhas() -> list[str]:
+    """_summary_
+
+    Returns:
+        list[str]: _description_
+    """
     open(ARQUIVOSENHAS, "a").close()
     with open(ARQUIVOSENHAS, "r") as arquivo:
         return arquivo.read().splitlines()
 
 ## Grava um arquivo de acordo com uma Lista de registros
 def gravarLinhas(linhas) -> None:
+    """_summary_
+
+    Args:
+        linhas (_type_): _description_
+    """
     with open(ARQUIVOSENHAS, "w") as arquivo:
-        for linha in linhas:
-            arquivo.write(linha + "\n")
+        arquivo.writelines(linha + "\n" for linha in linhas)
 ## Cadastro padrão mesmo :)
 def cadastrar(registro) -> None:
+    """_summary_
+
+    Args:
+        registro (_type_): _description_
+    """
     data: str = datetime.now().strftime("%d/%m/%Y %H:%M") ## Deixa no formato brasileiro
     with open(ARQUIVOSENHAS, "a") as arquivoSenhas:
         arquivoSenhas.write(f"{registro};{data}\n")
@@ -23,6 +38,14 @@ def cadastrar(registro) -> None:
 
 ## Monta o texto do registro para mostrar na tela, escondendo a senha
 def formatarRegistro(linha) -> str:
+    """_summary_
+
+    Args:
+        linha (_type_): _description_
+
+    Returns:
+        str: _description_
+    """
     campos: list[str] = linha.split(";")
     if len(campos) != 6:
         return "(registro no formato antigo: edite ou exclua)"
@@ -31,6 +54,8 @@ def formatarRegistro(linha) -> str:
     return f"Serviço: {servico}, Usuário/E-mail: {usuario}, Senha: {senha[:2]}******, Categoria: {categoria}, Observação: {obs}, Data: {data}"
 
 def listar() -> None:
+    """_summary_
+    """
     linhas: list[str] = lerLinhas()
     if len(linhas) == 0:
         print("Não há nenhum registro ;-; ")
@@ -40,6 +65,12 @@ def listar() -> None:
             ## Acessa o elemento i mas imprime como i + 1 pra ficar mais fácil de ler 
 
 def atualizar(antigo, novo) -> None:
+    """_summary_
+
+    Args:
+        antigo (_type_): _description_
+        novo (_type_): _description_
+    """
     linhas: list[str] = lerLinhas()
     if antigo in linhas:
         data: str = datetime.now().strftime("%d/%m/%Y %H:%M") ## A data também muda quando o registro é alterado
@@ -52,6 +83,11 @@ def atualizar(antigo, novo) -> None:
         print("Registro não encontrado. ;-;")
             
 def excluir(registro) -> None:
+    """_summary_
+
+    Args:
+        registro (_type_): _description_
+    """
     linhas: list[str] = lerLinhas()
     if registro in linhas:
         linhas.remove(registro)
@@ -61,6 +97,8 @@ def excluir(registro) -> None:
         print("Registro não encontrado. ;-;")
 
 def ultimoCadastro() -> None:
+    """_summary_
+    """
     linhas: list[str] = lerLinhas()
     if len(linhas) == 0:
         print("Não há nenhum registro ;-;")

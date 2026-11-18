@@ -1,11 +1,20 @@
-import crud
-import categorias
-import VerificadorDeSenha
-import risco
 import auditoria
+import categorias
+import crud
+import risco
+import VerificadorDeSenha
+
 
 ## Igual ao input, mas não aceita ";" (é o separador dos campos no arquivo)
 def entrada(mensagem: str) -> str:
+    """_summary_
+
+    Args:
+        mensagem (str): _description_
+
+    Returns:
+        str: _description_
+    """
     texto: str = input(mensagem)
     while ";" in texto:
         print('O caractere ";" não é permitido. Tente de novo.')
@@ -14,6 +23,14 @@ def entrada(mensagem: str) -> str:
 
 ## Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
 def lerNumero(mensagem: str) -> int:
+    """_summary_
+
+    Arg
+        mensagem (str): _description_
+
+    Returns:
+        int: _description_
+    """
     texto: str = input(mensagem).strip()
     while not texto.isdigit(): ## isdigit() é True só se o texto tiver apenas algarismos
         print("Digite apenas números.")
@@ -22,6 +39,11 @@ def lerNumero(mensagem: str) -> int:
 
 ## Mostra as categorias e retorna o nome da escolhida
 def escolherCategoria() -> str:
+    """_summary_
+
+    Returns:
+        str: _description_
+    """
     linhas: list[str] = categorias.listar()
     numero: int = lerNumero("Qual a categoria?: ")
     while not 1 <= numero <= len(linhas):
@@ -30,6 +52,11 @@ def escolherCategoria() -> str:
     return linhas[numero - 1].split(";")[0]
 
 def lerExigencia() -> str:
+    """_summary_
+
+    Returns:
+        str: _description_
+    """
     exigencia: str = input("Exigência mínima de força da senha (fraca, média ou forte): ").strip().lower()
     while exigencia not in VerificadorDeSenha.NIVEIS:
         print("Digite fraca, média ou forte.")

@@ -1,10 +1,23 @@
 SIMBOLOS: str = "!@#$%&*()-_=+[]{};:,.<>?/|"
 
 def ler_senhas_comuns() -> set[str]: #lê a lista de senhas comuns do arquivo
+    """_summary_
+
+    Returns:
+        set[str]: _description_
+    """
     with open("senhas_comuns.txt", "r") as arquivo: #"with ... as arquivo" garante que o arquivo é fechado sozinho ao sair do bloco \\ arquivo.read() lê todo o conteúdo como um único texto
         return set(arquivo.read().splitlines()) #set() transforma a lista em um conjunto
 
 def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (: str) e (-> int) quer dizer: a senha será um texto e a função vai retornar um valor inteiro 
+    """_summary_
+
+    Args:
+        senha (str): _description_
+
+    Returns:
+        tuple[int,int]: _description_
+    """
     # retorna uma pontuação que indica a força da senha
     # quanto maior a pontuação, mais forte é a senha
     
@@ -44,6 +57,11 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]: #pra quem nao souber, (
 
 
 def verificar_senha(senha: str) -> None:
+    """_summary_
+
+    Args:
+        senha (str): _description_
+    """
     #verifica a senha em vários aspectos e imprime uma mensagem sobre sua força
 
     senhas_comuns: set[str] = ler_senhas_comuns()
@@ -68,11 +86,7 @@ def verificar_senha(senha: str) -> None:
         print("A senha é mediana. \n")
         if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
-    elif pontuacao_senha_atual == 3:
-        print("A senha não é tão forte. \n")
-        if tipos_presentes_senha_atual < 4:
-            explicar_o_que_falta(senha)
-    elif pontuacao_senha_atual == 4:
+    elif pontuacao_senha_atual == 3 or pontuacao_senha_atual == 4:
         print("A senha não é tão forte. \n")
         if tipos_presentes_senha_atual < 4:
             explicar_o_que_falta(senha)
@@ -85,6 +99,11 @@ def verificar_senha(senha: str) -> None:
 
 
 def explicar_o_que_falta(senha: str) -> None:
+    """_summary_
+
+    Args:
+        senha (str): _description_
+    """
     #em vez de repetir todos os critérios, diz exatamente o que está faltando
     print("A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um caractere especial e ao menos um número. Falta:")
     if not any(c.isupper() for c in senha):
@@ -102,6 +121,14 @@ def explicar_o_que_falta(senha: str) -> None:
 NIVEIS: list[str] = ["fraca", "média", "forte"]
 
 def classificar(pontuacao: tuple[int,int]) -> str:
+    """_summary_
+
+    Args:
+        pontuacao (tuple[int,int]): _description_
+
+    Returns:
+        str: _description_
+    """
     #segue as mensagens acima: 0 e 1 = fraca | 2 a 4 = mediana / não tão forte | 5 ou mais = extremamente forte
     if pontuacao[0] >= 5:
         return "forte"
@@ -110,6 +137,15 @@ def classificar(pontuacao: tuple[int,int]) -> str:
     return "fraca"
 
 def atende_exigencia(pontuacao: tuple[int,int], exigencia: str) -> bool:
+    """_summary_
+
+    Args:
+        pontuacao (tuple[int,int]): _description_
+        exigencia (str): _description_
+
+    Returns:
+        bool: _description_
+    """
     #pontuação 0 (senha comum ou muito fraca) nunca é aceita, em nenhuma categoria
     if pontuacao[0] == 0:
         return False

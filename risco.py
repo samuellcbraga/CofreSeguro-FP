@@ -6,6 +6,11 @@ import VerificadorDeSenha
 
 #monta um dicionario onde a chave é a senha e o valor é a lista de servicos que usam essa senha
 def agruparPorSenha() -> dict[str, str]:
+    """_summary_
+
+    Returns:
+        dict[str, str]: _description_
+    """
     grupos: dict[str, str] = {}
     for linha in crud.lerLinhas():
         celula: list[str] = linha.split(";")
@@ -18,6 +23,8 @@ def agruparPorSenha() -> dict[str, str]:
 
 #se uma senha tem mais de um servico na lista, ela tá repetida
 def avisarRepetidas() -> None:
+    """_summary_
+    """
     grupos: dict[str,str] = agruparPorSenha()
     achou: bool = False
     for senha in grupos:  # noqa: PLC0206
@@ -30,10 +37,20 @@ def avisarRepetidas() -> None:
 #antes de salvar uma senha, avisa se ela ja ta sendo usada em outro canto
 #NAO TO SABENDO ATIVAR ESSE MEGA PODER LÁ NO MENU!!!!!!!!!!!!!
 def servicosComMesmaSenha(senha: str) -> str | None:
+    """_summary_
+
+    Args:
+        senha (str): _description_
+
+    Returns:
+        str | None: _description_
+    """
     grupos: dict[str, str] = agruparPorSenha()
     return grupos.get(senha)
 
 def relatorio() -> None:
+    """_summary_
+    """
     comuns: set[str] = VerificadorDeSenha.ler_senhas_comuns()
     total: int = 0
     fracas: int = 0

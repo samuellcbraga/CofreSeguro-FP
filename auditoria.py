@@ -1,19 +1,25 @@
 from datetime import datetime
-from io import TextIOWrapper
 
 ARQUIVOLOG = "auditoria.txt"
 
 #cada linha do log: data e hora;operação;serviço
 def registrar(operacao, servico) -> None:
+    """_summary_
+
+    Args:
+        operacao (_type_): _description_
+        servico (_type_): _description_
+    """
     data: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     try:
-        arquivo: TextIOWrapper = open(ARQUIVOLOG, "a", encoding="utf-8")
-        arquivo.write(f"{data};{operacao};{servico}\n")
-        arquivo.close()
+        with open(ARQUIVOLOG, "a", encoding="utf-8") as arquivo:
+            arquivo.write(f"{data};{operacao};{servico}\n")
     except OSError: #o programa não pode quebrar por causa do log
         print("Aviso: não foi possível gravar no log de auditoria.")
 
 def listar() -> None:
+    """_summary_
+    """
     open(ARQUIVOLOG, "a", encoding="utf-8").close() #cria o arquivo vazio se ainda não existir
     try:
         with open(ARQUIVOLOG, "r", encoding="utf-8") as arquivo:

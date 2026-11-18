@@ -6,6 +6,11 @@ CATEGORIASPADRAO: list[str] = ["banco;forte", "rede social;média", "estudo;méd
 
 ## Lê o arquivo e retorna uma Lista com as categorias (cria o arquivo com as padrão se não existir)
 def lerCategorias() -> list[str]:
+    """_summary_
+
+    Returns:
+        list[str]: _description_
+    """
     open(ARQUIVOCATEGORIAS, "a").close() ## Cria o arquivo vazio se ele não existir (igual ao crud.py)
     with open(ARQUIVOCATEGORIAS, "r", encoding="utf-8") as arquivo:
         linhas: list[str] = arquivo.read().splitlines()
@@ -15,11 +20,20 @@ def lerCategorias() -> list[str]:
     return linhas
 
 def gravarCategorias(linhas) -> None:
+    """_summary_
+
+    Args:
+        linhas (_type_): _description_
+    """
     with open(ARQUIVOCATEGORIAS, "w", encoding="utf-8") as arquivo:
-        for linha in linhas:
-            arquivo.write(linha + "\n")
+        arquivo.writelines(linha + "\n" for linha in linhas)
 
 def listar() -> list[str]:
+    """_summary_
+
+    Returns:
+        list[str]: _description_
+    """
     linhas: list[str] = lerCategorias()
     for i in range(len(linhas)):
         nome, exigencia = linhas[i].split(";")
@@ -28,6 +42,12 @@ def listar() -> list[str]:
 
 ## Se a categoria já existe, muda a exigência dela. Se não existe, cadastra.
 def cadastrar(nome, exigencia) -> None:
+    """_summary_
+
+    Args:
+        nome (_type_): _description_
+        exigencia (_type_): _description_
+    """
     linhas: list[str] = lerCategorias()
     for i in range(len(linhas)):
         if linhas[i].split(";")[0] == nome:
@@ -41,6 +61,14 @@ def cadastrar(nome, exigencia) -> None:
 
 ## Retorna a exigência mínima de uma categoria ("fraca" se ela não existir mais)
 def exigenciaDa(nome: str) -> str:
+    """
+
+    Args:
+        nome (str): _description_
+
+    Returns:
+        str: _description_
+    """
     for linha in lerCategorias():
         nomeCategoria, exigencia = linha.split(";")
         if nomeCategoria == nome:

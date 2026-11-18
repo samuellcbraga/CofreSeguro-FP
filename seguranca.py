@@ -11,6 +11,16 @@ FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM = 4, 256 * 1024, 4  # Valores
 
 # Funcao serve para derivar chave a partir de uma senha, um salt (aleatorio) e um bool que diz se vai ser rapida ou lenta
 def _derivar_chave(passphrase: str, salt: bytes, is_slow: bool) -> bytes:  # funcao de derivacao de chave nao deve ser chamada sozinha, representado pelo _
+    """Deriva o hash a ser usado como chave de criptografia
+
+    Args:
+        passphrase (str): Senha a ser usada
+        salt (bytes): Salt a ser usado
+        is_slow (bool): Diz se a criptografia será lenta
+
+    Returns:
+        bytes: Hash
+    """
     if is_slow:
         return hash_secret_raw(
             passphrase.encode(), salt, SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM, hash_len=32, type=Type.ID
@@ -22,47 +32,45 @@ def _derivar_chave(passphrase: str, salt: bytes, is_slow: bool) -> bytes:  # fun
 
 def criptografar(plaintext: bytes, passphrase: str, is_slow: bool = False) -> bytes:
 
-    """
+    """Função de criptografar
 
-    Criptografa dado passado de forma segura.
+    Recebe dado a ser criptografado, senha e opcionalmente um booleano para definir se é lenta (para arquivos) ou não (comportamento padrão).
 
-    Para usar os dados passados, a função precisa receber o dado a ser criptografado e a senha a ser usada, além de especificar se a criptografia será lenta (destinada ao arquivo do banco) ou rápida (uso padrão, feita para categorias de senha ou senhas individuais, a depender da necessidade). Usa-se "rb" ou "wb" no comando 'open' para ler um arquivo e retornar o conteúdo em bytes, para uma string deve-se usar a função [string].encode().
+     Args:
+        plaintext (bytes): Dado a ser criptografado
+        passphrase (str): Senha a ser usada
+        is_slow (bool, optional): Diz se a criptografia será lenta (padrão False)
 
-    :param plaintext: O dado a ser criptografado em bytes
-    :type plaintext: bytes
-    :param passphrase: Senha a ser usada para criptografia
-    :type passphrase: str
-    :param is_slow: Criptografia deve ser lenta? normalmente irá ser rápida
-    :type is_slow: bool, optional
-    :return: Dados criptografados em bytes com header apropriado para descriptografia
-    :rtype: bytes
-
+    Returns:
+        bytes: Blob criptografado com cabeçalho contendo final da senha
     """
 
     salt, nonce = os.urandom(16), os.urandom(12)
-    header: bytes = HEADER.pack(is_slow, salt, nonce, passphrase[-1:-2:])
     if is_slow:
+        slow_header: bytes = HEADER.pack(is_slow, salt, nonce, b';;')
         key: bytes = _derivar_chave(passphrase, salt, is_slow)
+        return slow_header + AESGCM(key).encrypt(nonce, plaintext, slow_header)
     else:
+        header: bytes = HEADER.pack(is_slow, salt, nonce, str({plaintext})[:-2])
         key = _derivar_chave(passphrase, salt, is_slow)
-    return header + AESGCM(key).encrypt(nonce, plaintext, header)
+        return header + AESGCM(key).encrypt(nonce, plaintext, header)
 
 def descriptografar(blob: bytes, passphrase: str) -> bytes:
 
-    """
+    """Função de descriptografar
 
-    Descriptografa dados passados usando a senha.
+    Recebe dado criptografado e descriptografa apenas com a senha.
 
-    A função apenas precisa dos dados criptografados (blob) e da senha. Dados devem estar em bytes, senha deve ser passada em string. Todos os dados de descriptografia se encontram no header dos arquivos criptografados, então ele automaticamente identifica se é criptografia rápida ou lenta.
+      Args:
+        plaintext (bytes): Dado a ser descriptografado
+        passphrase (str): Senha da decriptografia
 
-    :param blob: Dados criptografados em bytes
-    :type blob: bytes
-    :param passphrase: A senha para descriptografia
-    :type passphrase: str
-    :return: Dados descriptografados em bytes
-    :rtype: bytes
-    :raises ValueError: se o arquivo não tiver espaço de header ou se tiver uma lentidão não definida no header
+    Raises:
+        ValueError: arquivo muito curto quando blob < HEADER.size
+        ValueError: Lentidão não definida" quando falta algo no cabeçalho
 
+    Returns:
+        bytes: Dado descriptografado
     """
 
     if len(blob) < HEADER.size:
@@ -78,15 +86,16 @@ def descriptografar(blob: bytes, passphrase: str) -> bytes:
     return AESGCM(key).decrypt(nonce, ciphertext, header)  # Retorna um erro InvalidTag independente de se foi por senha incorreta ou por arquivo adulterado
 
 def mostrar_final(blob: bytes) -> bytes:
-    """Mostra os dois dígitos da senha criptografada sem precisar descriptografar
-    
-    A função apenas printa o final da senha, detectando quando o dado passado é o banco.
+    """Mostra o final da senha a partir do cabeçalho (sem descriptografar nada)
 
-    :param blob: Senha a ter final mostrado
-    :type blob: bytes
-    :return: Final da senha em bytes
-    :rtype: bytes
-    :raises ValueError: se blob passado for de criptografia lenta (indica que não foi passada uma senha)
+    Args:
+        blob (bytes): A senha criptografada
+
+    Raises:
+        ValueError: Quando tenta revelar senha do arquivo, levanta erro
+
+    Returns:
+        bytes: Dígitos finais da senha em bytes
     """
     header = blob[: HEADER.size]
     _is_slow, _salt, _nonce, digitos_senha = HEADER.unpack(header)
