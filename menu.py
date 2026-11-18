@@ -1,6 +1,8 @@
 import crud
 import categorias
 import VerificadorDeSenha
+import risco
+import auditoria
 
 ## Igual ao input, mas não aceita ";" (é o separador dos campos no arquivo)
 def entrada(mensagem):
@@ -37,7 +39,7 @@ def lerExigencia():
 while True:
     print("----------------- GERENCIADOR DE SENHAS ----------------")
     print("Opções: ")
-    print("[1] - Adicionar nova senha\n[2] - Visualizar senhas\n[3] - Editar informações\n[4] - Excluir senhas\n[5] - Assistente de IA\n[6] - Ver último cadastro\n[7] - Revelar uma senha\n[8] - Categorias\n[9] - Encerrar programa")
+    print("[1] - Adicionar nova senha\n[2] - Visualizar senhas\n[3] - Editar informações\n[4] - Excluir senhas\n[5] - Assistente de IA\n[6] - Ver último cadastro\n[7] - Revelar uma senha\n[8] - Categorias\n[9] - Encerrar programa\n[10] - Ver locais com mesma senha\n[11] - Ver senhas em risco\n[12] - Registro de auditoria")
     escolha = lerNumero("\nO que deseja fazer?: ")
     match escolha:
         case 1:
@@ -59,7 +61,13 @@ while True:
             else:
                 obs = entrada("Alguma observação?: ")
                 #criptografa a senha aqui
+
+                #avisa se a senha ta sendo usada em outro canto
+                usadas = risco.servicosComMesmaSenha(senha)
+                if len(usadas) > 0:
+                    print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
                 crud.cadastrar(f"{servico};{user};{senha};{categoria};{obs}")
+                auditoria.registrar("CADASTRO", servico)
         case 2:
             #talvez possa perguntar de qual categoria/usuario gostaria de ver as senhas
             #por enquanto vai ver todas
@@ -70,6 +78,7 @@ while True:
             numero = lerNumero("Qual o número do registro que deseja editar?: ")
             if 1 <= numero <= len(linhas):
                 antigo = linhas[numero - 1]
+                servicoAntigo = antigo.split(";")[0]
                 servico = entrada("Serviço: ")
                 user = entrada("Usuário/E-mail: ")
                 categoria = escolherCategoria()
@@ -82,8 +91,16 @@ while True:
                 else:
                     obs = entrada("Observação: ")
                     #criptografa a senha aqui
+                    
+                    #avisa se a senha ta sendo usada em outro canto
+                    usadas = risco.servicosComMesmaSenha(senha)
+                    if len(usadas) > 0:
+                        print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
+
                     novo = f"{servico};{user};{senha};{categoria};{obs}"
+
                     crud.atualizar(antigo, novo)
+                    auditoria.registrar("EDIÇÃO", servicoAntigo)
             else:
                 print("Número inválido.")
         case 4:
@@ -92,6 +109,7 @@ while True:
             numero = lerNumero("Qual o número do registro que deseja excluir?: ")
             if 1 <= numero <= len(linhas):
                 crud.excluir(linhas[numero - 1])
+                auditoria.registrar("EXCLUSÃO", servico)
             else:
                 print("Número inválido.")
         case 5:
@@ -103,7 +121,9 @@ while True:
             linhas = crud.lerLinhas()
             numero = lerNumero("Qual o número do registro que deseja revelar a senha?: ")
             if 1 <= numero <= len(linhas) and len(linhas[numero - 1].split(";")) == 6:
-                print(f"Senha: {linhas[numero - 1].split(';')[2]}")  ## a senha é o 3º campo do registro
+                celulas = linhas[numero - 1].split(";")
+                print(f"Senha: {celulas[2]}")  ## a senha é o 3º campo do registro
+                auditoria.registrar("REVELOU SENHA", celulas[0])
             else:
                 print("Número inválido.")
         case 8:
@@ -114,3 +134,9 @@ while True:
         case 9:
             print("Obrigado por usar nosso gerenciador de senhas!")
             break
+        case 10:
+            risco.avisarRepetidas()
+        case 11:
+            risco.relatorio()
+        case 12:
+            auditoria.listar()
