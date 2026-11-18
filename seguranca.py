@@ -61,6 +61,9 @@ def decrypt(blob: bytes, passphrase: str) -> bytes:
     :type blob: bytes
     :param passphrase: A senha para descriptografia
     :type passphrase: str
+    :return: Dados descriptografados em bytes
+    :rtype: bytes
+    :raises ValueError: se o arquivo não tiver espaço de header ou se tiver uma lentidão não definida no header
 
     :Example:
     >>> decrypt(b'\x01M\x1a\xf9_L\x13um\xf1\r\xa3cU\x08\xddwm`\xe7\xf0\x0cl_\x07\xcf\xa7\xe6\x86J\x03\xd8\x86\x1c\xb3\xba\xc5\xd8\x920aJm\x02\xdbG\xab\x9b7Jv>\x10\x85\x85Du\x01\x8e\\W',"senha")
