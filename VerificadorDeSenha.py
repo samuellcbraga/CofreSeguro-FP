@@ -108,7 +108,7 @@ def verificar_senha(senha: str) -> None:
 
 
 def explicar_o_que_falta(senha: str) -> None:
-    """Explique o que falta, percorrendo a senha caractere por caractere. Lista os tipos de caractere exigidos
+    """Explica o que falta, percorrendo a senha caractere por caractere. Lista os tipos de caractere exigidos
 
     Args:
         senha (str): senha a ser analisada
@@ -148,7 +148,7 @@ def classificar(pontuacao: tuple[int,int]) -> str:
     return "fraca"
 
 def atende_exigencia(pontuacao: tuple[int,int], exigencia: str) -> bool:
-    """aqui verificamos se a senha atinge o nível mínimo requerido pela escolha feita em menu.py
+    """Aqui verificamos se a senha atinge o nível mínimo requerido pela escolha feita em menu.py
 
     Args:
         pontuacao (tuple[int,int]): a tupla (pontuacao,tipos_presentes) é devolvida pela função verificar_forca_senha
