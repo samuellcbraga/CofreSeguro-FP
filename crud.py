@@ -1,5 +1,6 @@
 ##ARQUIVOSENHAS pode ser temporário
 from datetime import datetime
+import cofre
 
 ARQUIVOSENHAS = "Lista_senhas.txt"
 ## Cada registro é uma linha com os campos separados por ";":
@@ -11,9 +12,7 @@ def lerLinhas() -> list[str]:
     Returns:
         list[str]: Lista das senhas registradas
     """
-    open(ARQUIVOSENHAS, "a").close()
-    with open(ARQUIVOSENHAS, "r") as arquivo:
-        return arquivo.read().splitlines()
+    return cofre.lerCifrado(ARQUIVOSENHAS) #o cofre destranca e lê
 
 ## Grava um arquivo de acordo com uma Lista de registros
 def gravarLinhas(linhas) -> None:
@@ -22,8 +21,8 @@ def gravarLinhas(linhas) -> None:
     Args:
         linhas(_type_): Lista de registros
     """
-    with open(ARQUIVOSENHAS, "w") as arquivo:
-        arquivo.writelines(linha + "\n" for linha in linhas)
+    cofre.gravarCifrado(ARQUIVOSENHAS, linhas) #manda pro cofre encriptar
+
 ## Cadastro padrão mesmo :)
 def cadastrar(registro) -> None:
     """Guarda as informações de cadastro do usuário no Lista_senhas.txt
@@ -32,8 +31,9 @@ def cadastrar(registro) -> None:
         registro (_type_): Informações de cadastro do usuário
     """
     data: str = datetime.now().strftime("%d/%m/%Y %H:%M") ## Deixa no formato brasileiro
-    with open(ARQUIVOSENHAS, "a") as arquivoSenhas:
-        arquivoSenhas.write(f"{registro};{data}\n")
+    linhas = lerLinhas()  #destranca os registros
+    linhas.append(f"{registro};{data}") #acrescenta o novo no fim da Lista
+    gravarLinhas(linhas)   #tranca tudo e salva
     print("Registro salvo!!!!")
 
 ## Monta o texto do registro para mostrar na tela, escondendo a senha
