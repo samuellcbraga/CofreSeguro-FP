@@ -4,7 +4,7 @@ import struct
 from argon2.low_level import Type, hash_secret_raw
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-HEADER = struct.Struct(">?16s12s2s")  # Struct armazena 4 valores: um booleano, uma string de 16 caracteres e outra string de 12 caracteres, sao elas is slow?, salt, nonce e últimos dígitos da senha
+HEADER = struct.Struct(">?16s12s2s")  # Struct armazena 4 valores: um booleano, uma string de 16 caracteres e outra string de 12 caracteres, sao elas is slow?, salt, nonce e um indicador fixo (b';;' lenta, b'--' rapida). Nada do conteudo vai aqui, pois o cabecalho fica em texto claro
 
 SLOW_TIME_COST, SLOW_MEMORY_COST, SLOW_PARALLELISM = 4, 1024 * 1024, 4  # Valores para criptografia lenta (mas mais segura), numero de iteracoes, memoria usada, paralelismo, respectivamente
 FAST_TIME_COST, FAST_MEMORY_COST, FAST_PARALLELISM = 4, 256 * 1024, 4  # Valores para criptografia rapida (mas menos segura), numero de iteracoes, memoria usada, paralelismo, respectivamente
@@ -42,7 +42,7 @@ def criptografar(plaintext: bytes, passphrase: str, is_slow: bool = False) -> by
         is_slow (bool, optional): Diz se a criptografia será lenta (padrão False)
 
     Returns:
-        bytes: Blob criptografado com cabeçalho contendo final da senha
+        bytes: Blob criptografado com cabeçalho (sem nenhum dado da senha)
     """
 
     salt, nonce = os.urandom(16), os.urandom(12)
@@ -52,8 +52,9 @@ def criptografar(plaintext: bytes, passphrase: str, is_slow: bool = False) -> by
         key: bytes = _derivar_chave(passphrase, salt, is_slow)
         return slow_header + AESGCM(key).encrypt(nonce, plaintext, slow_header)
     else:
-        trecho_senha: bytes = plaintext[:-2]
-        header: bytes = HEADER.pack(is_slow, salt, nonce, trecho_senha[:-2])
+        #valor fixo: antes ia um pedaço do texto original aqui, e o cabeçalho NÃO é criptografado
+        indicador_rapido: bytes = b'--'
+        header: bytes = HEADER.pack(is_slow, salt, nonce, indicador_rapido)
         key = _derivar_chave(passphrase, salt, is_slow)
         return header + AESGCM(key).encrypt(nonce, plaintext, header)
 

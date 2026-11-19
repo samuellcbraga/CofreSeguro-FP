@@ -30,7 +30,8 @@ def avisarRepetidas() -> None:
     for senha in grupos:  # noqa: PLC0206
         if len(grupos[senha]) > 1:
             achou = True
-        print("Mesma senha nos serviços: " + grupos[senha])
+            #join junta a lista num texto só, separado por vírgula (n dá pra somar texto + lista)
+            print("Mesma senha nos serviços: " + ", ".join(grupos[senha]))
     if not achou:
         print("Nenhuma senha repetida.")
 

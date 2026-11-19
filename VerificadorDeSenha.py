@@ -25,7 +25,7 @@ def verificar_forca_senha(senha: str) -> tuple[int,int]:
     pontuacao: int = 0
     tipos_presentes: int = 0
 
-    if senha in ler_senhas_comuns(): #senha comum vale 0, não importa quão "forte" ela pareça
+    if senha.lower() in ler_senhas_comuns(): #lower() pra "Senha123" também contar como comum. Senha comum vale 0, não importa quão "forte" ela pareça
         return (pontuacao, tipos_presentes)
 
 
@@ -76,7 +76,7 @@ def verificar_senha(senha: str) -> None:
     senhas_comuns: set[str] = ler_senhas_comuns()
 
     # verifica se a senha é comum demais
-    if senha in senhas_comuns:
+    if senha.lower() in senhas_comuns: #lower() igual ao verificar_forca_senha
         print("A senha é muito comum. A força da sua senha é 0.")
         print("Sua senha não foi cadastrada. Por favor, cadastre outra senha.")
         return
