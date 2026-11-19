@@ -23,7 +23,7 @@ def entrada(mensagem: str) -> str:
         entrada(mensagem)
     return texto
 
-## Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
+#Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
 def lerNumero(mensagem: str) -> int:
     """_summary_
 
@@ -34,12 +34,12 @@ def lerNumero(mensagem: str) -> int:
         int: _description_
     """
     texto: str = input(mensagem).strip()
-    while not texto.isdigit(): ## isdigit() é True só se o texto tiver apenas algarismos
+    while not texto.isdigit(): #isdigit() é True só se o texto tiver apenas algarismos
         print("Digite apenas números.")
         lerNumero(mensagem)
     return int(texto)
 
-## Mostra as categorias e retorna o nome da escolhida
+#Mostra as categorias e retorna o nome da escolhida
 def escolherCategoria() -> str:
     """_summary_
 
@@ -142,10 +142,10 @@ while True:
                 novo_user: str = entrada("Usuário/E-mail: ")
                 nova_categoria: str = escolherCategoria()
                 nova_senha: str = entrada("Senha: ")
-                nova_pontuacao: int = VerificadorDeSenha.verificar_forca_senha(senha)[0]
-                VerificadorDeSenha.verificar_senha(senha)
-                if not VerificadorDeSenha.atende_exigencia(pontuacao, categorias.exigenciaDa(categoria)):
-                    print(f"A categoria {categoria} exige senha no mínimo {categorias.exigenciaDa(categoria)}.")
+                nova_pontuacao: tuple[int,int] = VerificadorDeSenha.verificar_forca_senha(nova_senha)
+                VerificadorDeSenha.verificar_senha(nova_senha)
+                if not VerificadorDeSenha.atende_exigencia(nova_pontuacao, categorias.exigenciaDa(nova_categoria)):
+                    print(f"A categoria {nova_categoria} exige senha no mínimo {categorias.exigenciaDa(nova_categoria)}.")
                     print("Erro: Tentou cadastrar uma senha fraca. Operação cancelada.")
                 else:
                     nova_obs: str = entrada("Observação: ")
@@ -156,7 +156,7 @@ while True:
                     if usadas:
                         print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
 
-                    novo: str = f"{servico};{user};{senha};{categoria};{obs}"
+                    novo: str = f"{novo_servico};{novo_user};{nova_senha};{nova_categoria};{nova_obs}"
 
                     crud.atualizar(antigo, novo)
                     auditoria.registrar("EDIÇÃO", servicoAntigo)
@@ -167,6 +167,7 @@ while True:
             linhas_removiveis: list[str] = crud.lerLinhas()
             numero_removido: int = lerNumero("Qual o número do registro que deseja excluir?: ")
             if 1 <= numero <= len(linhas_removiveis):
+                servicoRemovido: str = linhas_removiveis[numero_removido - 1].split(";")[0] #pega o nome antes de excluir
                 crud.excluir(linhas_removiveis[numero_removido - 1])
                 auditoria.registrar("EXCLUSÃO", servico)
             else:
