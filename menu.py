@@ -2,6 +2,7 @@ import assistente
 import auditoria
 import categorias
 import crud
+from getpass import getpass
 import risco
 import VerificadorDeSenha
 import cofre
@@ -75,7 +76,7 @@ def entrar():
     if cofre.existe(crud.ARQUIVOSENHAS):
         tentativas=0
         while tentativas < 3:
-            cofre.definirSenha(input("Senha mestra: "))
+            cofre.definirSenha(getpass("Senha mestra: "))
             try:
                 crud.lerLinhas()
                 return True
@@ -85,12 +86,12 @@ def entrar():
         return False #fora do while: agora são 3 tentativas de verdade
 
     print("Primeira execução: crie sua senha mestra.")
-    senha1 = input("Nova senha mestra: ")
-    senha2 = input("Repita a senha mestra: ")
+    senha1: str = getpass("Nova senha mestra: ")
+    senha2: str = getpass("Repita a senha mestra: ")
     while senha1 == "" or senha1 != senha2:
             print("As senhas não conferem. Tente de novo.")
-            senha1 = input("Nova senha mestra: ")
-            senha2 = input("Repita a senha mestra: ")
+            senha1 = getpass("Nova senha mestra: ")
+            senha2 = getpass("Repita a senha mestra: ")
     cofre.definirSenha(senha1) #fora do while: sempre guarda a senha, mesmo acertando de primeira
     crud.gravarLinhas([])
     return True

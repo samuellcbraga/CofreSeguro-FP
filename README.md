@@ -9,6 +9,7 @@ O Projeto CryptoCarol é um banco de senhas escrito em Python com capacidade de 
 - Bibliotecas padrão do Python:
     - cryptography
     - struct
+    - getpass
 - Biblioteca externa do Python
     - argon2-cffi
     - groq (requisito)
