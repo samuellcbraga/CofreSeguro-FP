@@ -2,12 +2,24 @@ import seguranca
 
 mestra = [""]
 def definirSenha(senha):
+    """Salva a senha mestra 
+    """
     mestra[0] = senha
 
 def senhaCorreta(tentativa):
+    """Verifica se a senha escrita é igual a senha mestra salva
+    """
     return tentativa == mestra[0]
 
 def existe(caminho: str) -> bool:
+    """Verifica se o caminho de um arquivo qualquer existe
+
+    Args:
+        caminho: Nome do arquivo
+
+    Returns:
+        True ou False
+    """
     try:
         arquivo = open(caminho, "r")  
         arquivo.close()
@@ -16,6 +28,14 @@ def existe(caminho: str) -> bool:
         return False
 
 def lerCifrado(caminho):
+    """Lê um arquivo criptografado qualquer e o descriptografa
+
+    Args:
+        caminho: Nome do arquivo
+
+    Returns:
+        texto.splitlines(): Arquivo descriptografado
+    """
     if not existe(caminho): #para caso o arquivo ainda n exista, n tem nd guardado
         return []
     arquivo = open(caminho, "r")
@@ -36,6 +56,13 @@ def lerCifrado(caminho):
 
 #pega lista de linhas, tranca e salva no .txt
 def gravarCifrado(caminho, linhas):
+    """Pega lista de linhas do arquivo, criptografa e salva no .txt
+
+    Args:
+        caminho: Nome do arquivo
+        linhas: Lista de linhas do arquivo
+    """
+    
     #junta todas as linhas em um texto só (uma linha por registro)
     texto = "\n".join(linhas)
 

@@ -5,7 +5,7 @@ ARQUIVOLOG = "auditoria.txt"
 
 #cada linha do log: data e hora;operação;serviço
 def registrar(operacao, servico) -> None:
-    """registra as operações realizadas pelo usuário
+    """Registra as operações realizadas pelo usuário no arquivo "auditoria.txt"
     """
     data: str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     try:
@@ -16,7 +16,7 @@ def registrar(operacao, servico) -> None:
         print("Aviso: não foi possível gravar no log de auditoria.")
 
 def listar() -> None:
-    """_summary_
+    """Descriptografa, lê e escreve no terminal a auditoria
     """
     open(ARQUIVOLOG, "a", encoding="utf-8").close() #cria o arquivo vazio se ainda não existir
     try:

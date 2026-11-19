@@ -6,10 +6,10 @@ CATEGORIASPADRAO: list[str] = ["banco;forte", "rede social;média", "estudo;méd
 
 ## Lê o arquivo e retorna uma Lista com as categorias (cria o arquivo com as padrão se não existir)
 def lerCategorias() -> list[str]:
-    """_summary_
+    """Acessa o arquivo "categorias.txt"
 
     Returns:
-        list[str]: _description_
+        list[str]: Lista das categorias registradas
     """
     open(ARQUIVOCATEGORIAS, "a").close() ## Cria o arquivo vazio se ele não existir (igual ao crud.py)
     with open(ARQUIVOCATEGORIAS, "r", encoding="utf-8") as arquivo:
@@ -20,19 +20,19 @@ def lerCategorias() -> list[str]:
     return linhas
 
 def gravarCategorias(linhas) -> None:
-    """_summary_
+    """Registra uma categoria nova
 
     Args:
-        linhas (_type_): _description_
+        linhas (_type_): Lista das categorias registradas
     """
     with open(ARQUIVOCATEGORIAS, "w", encoding="utf-8") as arquivo:
         arquivo.writelines(linha + "\n" for linha in linhas)
 
 def listar() -> list[str]:
-    """_summary_
+    """Escreve a lista de categorias no terminal
 
     Returns:
-        list[str]: _description_
+        list[str]: Lista legível das categorias 
     """
     linhas: list[str] = lerCategorias()
     for i in range(len(linhas)):
@@ -42,11 +42,11 @@ def listar() -> list[str]:
 
 ## Se a categoria já existe, muda a exigência dela. Se não existe, cadastra.
 def cadastrar(nome, exigencia) -> None:
-    """_summary_
+    """Se a categoria já existe, muda a exigência dela. Se não existe, cadastra.
 
     Args:
-        nome (_type_): _description_
-        exigencia (_type_): _description_
+        nome (_type_): Nome da categoria
+        exigencia (_type_): Exigência de força da categoria
     """
     linhas: list[str] = lerCategorias()
     for i in range(len(linhas)):
@@ -61,13 +61,13 @@ def cadastrar(nome, exigencia) -> None:
 
 ## Retorna a exigência mínima de uma categoria ("fraca" se ela não existir mais)
 def exigenciaDa(nome: str) -> str:
-    """
+    """Retorna a exigência mínima de uma categoria ("fraca" se ela não existir mais)
 
     Args:
-        nome (str): _description_
+        nome (str): Nome da categoria
 
     Returns:
-        str: _description_
+        str: Exigência mínima da categoria
     """
     for linha in lerCategorias():
         nomeCategoria, exigencia = linha.split(";")

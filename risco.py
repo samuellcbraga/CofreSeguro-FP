@@ -4,7 +4,10 @@ import VerificadorDeSenha
 
 #monta um dicionario onde a chave é a senha e o valor é a lista de servicos que usam essa senha
 def agruparPorSenha() -> dict[str, list [str]]:
-    """monta um dicionario onde a chave é a senha e o valor é a lista de servicos que usam essa senha
+    """Monta um dicionario onde a chave é a senha e o valor é a lista de servicos que usam essa senha
+
+    Returns:
+        grupos: O dicionário
     """
     grupos: dict[str, list[str]] = {}
     for linha in crud.lerLinhas():
@@ -20,7 +23,7 @@ def agruparPorSenha() -> dict[str, list [str]]:
 
 def avisarRepetidas() -> None:
     """
-        antes de salvar uma senha, avisa se ela ja ta sendo usada em outro canto
+        Antes de salvar uma senha, avisa se ela ja ta sendo usada em outro registro
     """
     grupos: dict[str, list[str]] = agruparPorSenha()
     achou: bool = False
@@ -32,7 +35,7 @@ def avisarRepetidas() -> None:
         print("Nenhuma senha repetida.")
 
 def servicosComMesmaSenha(senha: str) -> list[str]:
-    """antes de salvar uma senha, retorna os servicos que ja usam ela
+    """Antes de salvar uma senha, retorna os servicos que ja usam ela
     """
     grupos: dict[str, list[str]] = agruparPorSenha()
     if senha in grupos:
@@ -41,7 +44,7 @@ def servicosComMesmaSenha(senha: str) -> list[str]:
 
 
 def relatorio():
-    """_summary_
+    """Analisa as senhas registradas e retorna um relatório dos achados (Quantidade, senhas fracas, senhas comuns e senhas repetidas)
     """
     comuns = VerificadorDeSenha.ler_senhas_comuns()
     total = 0

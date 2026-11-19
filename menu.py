@@ -9,13 +9,13 @@ import cofre
 
 ## Igual ao input, mas não aceita ";" (é o separador dos campos no arquivo)
 def entrada(mensagem: str) -> str:
-    """_summary_
+    """Igual ao input do python, mas não aceita ";" (é o separador dos campos no arquivo) 
 
     Args:
-        mensagem (str): _description_
+        mensagem (str): Mensagem exibida
 
     Returns:
-        str: _description_
+        str: Input do usuário
     """
     texto: str = input(mensagem)
     while ";" in texto:
@@ -25,13 +25,13 @@ def entrada(mensagem: str) -> str:
 
 #Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
 def lerNumero(mensagem: str) -> int:
-    """_summary_
+    """Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
 
-    Arg
-        mensagem (str): _description_
+    Args:
+        mensagem (str): Mensagem exibida
 
     Returns:
-        int: _description_
+        int: Input do usuário
     """
     texto: str = input(mensagem).strip()
     while not texto.isdigit(): #isdigit() é True só se o texto tiver apenas algarismos
@@ -41,10 +41,10 @@ def lerNumero(mensagem: str) -> int:
 
 #Mostra as categorias e retorna o nome da escolhida
 def escolherCategoria() -> str:
-    """_summary_
+    """Mostra as categorias e retorna o nome da escolhida
 
     Returns:
-        str: _description_
+        str: Nome da categoria escolhida
     """
     linhas: list[str] = categorias.listar()
     numero: int = lerNumero("Qual a categoria?: ")
@@ -54,10 +54,10 @@ def escolherCategoria() -> str:
     return linhas[numero - 1].split(";")[0]
 
 def lerExigencia() -> str:
-    """_summary_
+    """Recebe do usuário a escolha da exigência de força mínima da senha de uma categoria a ser adicionada
 
     Returns:
-        str: _description_
+        str: A exigência mínima escolhida para a categoria
     """
     exigencia: str = input("Exigência mínima de força da senha (fraca, média ou forte): ").strip().lower()
     while exigencia not in VerificadorDeSenha.NIVEIS:
@@ -66,6 +66,11 @@ def lerExigencia() -> str:
     return exigencia
 
 def entrar():
+    """Responsável por verificar se a senha mestra está correta. Permite ou não o acesso do usuário
+
+    Returns:
+        True ou False
+    """
     if cofre.existe(crud.ARQUIVOSENHAS):
         tentativas=0
         while tentativas < 3:
@@ -77,9 +82,6 @@ def entrar():
                 print("Senha mestra incorreta.")
                 tentativas += 1
             return False
-
-
-
     print("Primeira execução: crie sua senha mestra.")
     senha1 = input("Nova senha mestra: ")
     senha2 = input("Repita a senha mestra: ")
