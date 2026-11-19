@@ -139,10 +139,9 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
   - Integrou o agente de IA da aula ao menu (opção 5);
   - Ajudou na correção de bugs e na organização do repositório.
  
-- Marco Antonio Pinto Paes Fortes Neto:
-
- - Contribuição na lógica,esqueletização e na criação do módulo VerificadorDeSenha.py
-- Ajudou na correçào de bugs e na organização do repositório 
+ - Marco Antonio Pinto Paes Fortes Neto:
+    - Contribuição na lógica,esqueletização e na criação do módulo VerificadorDeSenha.py
+    - Ajudou na correçào de bugs e na organização do repositório 
 
  
 
