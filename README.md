@@ -4,19 +4,31 @@
 * Turma: CC1A - Cesar School
 ## Introdução:
 O Projeto CryptoCarol é um banco de senhas escrito em Python com capacidade de criptografia de ponta utilizando criptografia em descanso AES-GCM e hashing argon2id (algoritmos de ponta usados pela indústria de cybersegurança) com salting e nonces randomizados a fim de dificultar acesso ao banco de senhas.
-
 ### Requisitos:
-* Python 3 e pip
-* Bibliotecas: cryptography, argon2-cffi e groq (esta só para o assistente de IA)
-
+* Pip
+- Bibliotecas padrão do Python:
+    - cryptography
+    - struct
+- Biblioteca externa do Python
+    - argon2-cffi
+    - groq (requisito)
 ## Instalação:
+Instale as bibliotecas necessárias:
+
+    python -m pip install cryptography struct argon2-cffi groq
+Clone o repositório:
 
     git clone https://github.com/samuellcbraga/CofreSeguro-FP.git
+
+Inicie o programa abrindo o diretório CofreSeguro-FP e inicie o arquivo menu.py:
+
+    python3 menu.py
     cd CofreSeguro-FP
     python -m pip install cryptography argon2-cffi groq
     python menu.py
 
 Para usar o assistente de IA (opção 5), copie o `.env.example` com o nome `.env` e coloque nele sua chave gratuita de https://console.groq.com. Nunca envie o `.env` ao GitHub. Senhas, usuários, observações e nomes dos serviços não são enviados ao modelo.
+
 
 ## Utilização Básica:
 Ao iniciar o programa você se deparará com um menu:
@@ -55,8 +67,33 @@ Apesar disso, o SHA256 tem vulnerabilidades conhecidas. Uma delas é a simples c
 Então, finalmente, a escolha do sistema de hash usado: Argon2id. O Argon2id é um algoritmo de hashing com *salt* randomizado nativo, e com uso de memória, número de iterações, e paralelismo utilizado fixos, definidos no momento da criptografia. Isso significa que a quantidade de recursos necessários para uma tentativa pode ser definido de forma a aumentar o tempo necessário por tentativa, e essa funcionalidade permite aumentar MUITO a dificuldade de uma invasão por força bruta. 
 
 ### Lógica utilizada:
-WIP
+Considerando o método seguro de criptografia simétrica utilizado, pode-se dispensar a necessidade de salvar em arquivos adicionais as informações necessárias para descriptografia de qualquer bloco, seja apenas texto ou arquivo inteiro, permitindo especificidade na parte de pesos de memória utilizados. Com isto, pode-se aplicar o hashing da senha através do Argon2id que é resistente a ataques side-channel e de força bruta guardando o *salt* utilizado num *header* não criptografado, porém autenticado, do algoritmo AES-GCM. Desta forma se pode garantir que todos os dados do arquivo estão inalterados.
+
+Para tirar proveito máximo do sistema de hashing e senhas do banco AES, a criptografia e descriptografia foram dadas dois conjuntos de variáveis constantes diferentes para os parâmetros do hash. Desta forma, é possível utilizar um processo mais intensivo no gasto de recursos para fortalecer o arquivo de senhas (caso ele seja copiado por alguém malicioso ou comprometido de alguma forma), enquanto não trazendo o impacto de tempo para toda operação dentro do gerenciador de senhas. Fazendo assim, o banco demora mais por tentativa, impedindo ataques de força bruta em quantidade, mas só precisa realizar as operações mais longas duas vezes ao total, uma ao abrir o programa e outra ao fechar. Simultaneamente, as operações repetitivas internas ao gerenciador, usam uma criptografia rápida e suficientemente segura, ainda mais sabendo que não será legível sem acesso direto à memória do programa após destravamento da primeira camada robusta.
+
+Para permitir funcionamento de mostragem de parte da senha (requisito), foi adicionado ao header 2 caracteres correspondentes ao final da senha, apendidos a uma linha de '*' de quantidade padronizada, evitando divulgar não-intencionalmente o comprimento das senhas do banco. O mesmo sistema de criptografia é replicado nos arquivos de auditoria, evitando novamente que acessos indesejados ocorram. Além de tudo isso, caso um método de força bruta apareça no futuro próximo, a dupla camada de criptografia com GCM permite que uma extração forçada não confirme legibilidade do arquivo, pois o erro levantado ao tentar descriptografar é o mesmo em caso de senha incorreta e bloco criptografado adulterado. 
+
+Da forma que foi feito o sistema de banco de senhas, nenhum acesso indesejado pode ocorrer sem ser explicitamente feito dentro do programa, que em caso de um executável binário ainda ofuscaria o funcionamento do código. Ademais, a senha do banco em si não é escrita a disco em momento algum, impedindo extração sem entrada correta que é apenas armazenada como variável (na RAM da máquina, não no armazenamento de disco). Com isto, temos o efeito adicional de impedir leitura por meio da IA integrada (requisito) sem explicitamente programar uma passagem dos dados para ela. Com isso, não existe possibilidade de vazamento para a IA. 
     
+### Soluções de segurança aplicadas pela Lógica:
+- Ataques de força bruta à senha do dado criptografado por usar hash;
+- Ataques de força bruta para descobrir hash usado com chave de criptografia;
+- Ataques de side-channel durante hashing devido à natureza do Argon2id;
+- Tentativa e erro de manipulação aos dados ou de senhas levantam mesmo erro (dificulta engenharia reversa);
+- Extração de senha do disco é impossível pois a mesma só é inserida em variável (memória temporária);
+- Acesso a dados supérfluos é impedido por criptografia dupla (arquivo e dados internos).
+
+### Falhas não mitigadas pela lógica (e porque podem ser amenas):
+- **Alteração do código do programa para salvar a senha:** é amena pois acesso direto ao código fonte implica comprometimento da máquina como um todo;
+- **Keyloggers:** Assim como o ponto acima, implica que a máquina inteira está comprometida, não sendo falha por parte do programa;
+- **Exploit de memória para extração das variáveis do programa:** Requer controle granular dos blocos de memória e acesso de escrita na máquina, de forma que dificilmente ocorreria, mas não é mitigável no presente;
+- **Leitura da senha:** Extremamente improvável e requer proximidade à máquina e leitura através da digitação do teclado, pois campos de senha são ofuscados;
+- **Esquecimento da senha mestra:** Consequência direta do grau de segurança escolhido. Para impedir novos vetores de ataque, a senha é o único meio de entrada considerado viável, perdê-la implica perda do banco de senhas inteiro;
+- **Senha fraca:** Apesar do hash utilizado ser lento com finalidade explícita de redução de viabilidade de tentativa e erro, uma senha comum pode implicar poucas tentativas. Isso é reduzido com uma senha forte, conforme recomendado pelo próprio banco de senhas, juntamente com a repetição constante da senha mestra para acessar o banco em si tornando difícil de se esquecer, além de se tornar necessário memorizar apenas uma senha, deixando o banco cuidar do restante ser uma economia de recursos mentais significativo.
+
+### Conclusão do Sistema de Segurança:
+Apesar de não ser perfeito, nenhum sistema de segurança existente pode ser considerado perfeito. O esforço maior foi para tornar o mais improvável possível que houvesse uma invasão de terceiros, de forma que o único meio de acessar os arquivos seria comprometendo a máquina como um todo. Caso queira mitigar invasões de dispositivo, coloque suas senhas anotadas num papel dentro de um cofre cimentado no chão, atualizando manualmente toda vez que necessário. Caso prefira uma camada maior de conveniência, o Cofre CryptoCarol pode ser um bom começo para você.
+
 
 ## Participantes:
 - Artur de Carvalho Lyra (Arcaly)
@@ -71,7 +108,8 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
 
 - Artur Lyra: 
   - Adicionou o módulo seguranca.py;
-  - Responsável por organizar a criptografia e descriptografia do sistema como um todo;
+  - Pesquisa e arquitetura da segurança de arquivos do código;
+  - Responsável por organizar as funções de criptografia e descriptografia do sistema como um todo;
   - Limpeza geral do código como um todo atendendo boas práticas (atomização de funções, notação de tipos, uso de docstrings, etc.);
   - Documentação do README.md (manual escolhido).
  
@@ -82,12 +120,16 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
 
 - Júlia de Melo Lopes:
   - Adicionou o módulo menu.py;
+  - Esqueletou entrada de todas as funções que faziam parte do menu;
+  - Implementação do código de outros módulos no menu;
+  - Correção de bugs vindos de outros módulos;
+  - Complementação de Docstrings para documentação das funções.
 
 - Marina Cavendish:
   - Implementou a detecção de risco (risco.py): alerta de senhas repetidas entre serviços, aviso ao cadastrar uma senha já usada e relatório de segurança (total de credenciais, fracas, comuns, repetidas e dias desde a última alteração);
   - Implementou o registro de auditoria (auditoria.py): log de cadastro, edição, exclusão e revelação de senha (operação, serviço, data e hora), consultável pelo menu;
   - Integrou a senha mestra e o cofre criptografado (cofre.py) ao fluxo de entrada do programa, com limite de tentativas;
-  - Integrou os módulos no menu principal e corrigiu erros encontrados durante a integração.
+  - Integrou os módulos criados no menu principal e corrigiu erros encontrados durante a integração.
 
 - Samuel Lins Cavalcanti Braga:
   - Criou o crud.py e o integrou ao menu;
