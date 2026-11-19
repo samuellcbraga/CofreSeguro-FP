@@ -88,6 +88,12 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
   - Implementou o registro de auditoria (auditoria.py): log de cadastro, edição, exclusão e revelação de senha (operação, serviço, data e hora), consultável pelo menu;
   - Integrou a senha mestra e o cofre criptografado (cofre.py) ao fluxo de entrada do programa, com limite de tentativas;
   - Integrou os módulos no menu principal e corrigiu erros encontrados durante a integração.
+
+- Samuel Lins Cavalcanti Braga:
+  - Criou o crud.py e o integrou ao menu;
+  - Adicionou as categorias, a data de cadastro e a senha mascarada na listagem;
+  - Integrou o agente de IA da aula ao menu (opção 5);
+  - Ajudou na correção de bugs e na organização do repositório.
  
 
  
