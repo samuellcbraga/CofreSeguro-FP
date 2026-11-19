@@ -74,3 +74,14 @@ def exigenciaDa(nome: str) -> str:
         if nomeCategoria == nome:
             return exigencia
     return "fraca"
+
+## Só aceita letras e espaços, até 20 caracteres (evita texto estranho indo pro assistente de IA)
+def nomeValido(nome: str) -> bool:
+    """confere se o nome da categoria é seguro
+    """
+    if nome == "" or len(nome) > 20:
+        return False
+    for letra in nome:
+        if not (letra.isalpha() or letra == " "): #isalpha() aceita acento, então "saúde" passa
+            return False
+    return True
