@@ -6,23 +6,17 @@
 O Projeto CryptoCarol é um banco de senhas escrito em Python com capacidade de criptografia de ponta utilizando criptografia em descanso AES-GCM e hashing argon2id (algoritmos de ponta usados pela indústria de cybersegurança) com salting e nonces randomizados a fim de dificultar acesso ao banco de senhas.
 
 ### Requisitos:
-* Pip
-- Bibliotecas padrão do Python:
-    - cryptography
-    - struct
-- Biblioteca externa do Python
-    - argon2-cffi
-## Instalação:
-Instale as bibliotecas necessárias:
+* Python 3 e pip
+* Bibliotecas: cryptography, argon2-cffi e groq (esta só para o assistente de IA)
 
-    pip install cryptography struct argon2-cffi
-Clone o repositório:
+## Instalação:
 
     git clone https://github.com/samuellcbraga/CofreSeguro-FP.git
+    cd CofreSeguro-FP
+    python -m pip install cryptography argon2-cffi groq
+    python menu.py
 
-Inicie o programa abrindo o diretório CofreSeguro-FP e inicie o arquivo menu.py:
-
-    python3 menu.py
+Para usar o assistente de IA (opção 5), copie o `.env.example` com o nome `.env` e coloque nele sua chave gratuita de https://console.groq.com. Nunca envie o `.env` ao GitHub. Senhas, usuários, observações e nomes dos serviços não são enviados ao modelo.
 
 ## Utilização Básica:
 Ao iniciar o programa você se deparará com um menu:
