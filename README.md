@@ -99,7 +99,7 @@ Apesar de não ser perfeito, nenhum sistema de segurança existente pode ser con
 - Artur de Carvalho Lyra (Arcaly)
 - José Guilherme Burégio (santosdecartier)
 - Júlia de Melo (Marsheemelo)
-- Marco (sem github)
+- Marco (Marconet18)
 - Marina Queiroga Cavendish (marinacavendish)
 - Samuel Lins Braga (samuellcbraga)
 
@@ -136,6 +136,12 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
   - Adicionou as categorias, a data de cadastro e a senha mascarada na listagem;
   - Integrou o agente de IA da aula ao menu (opção 5);
   - Ajudou na correção de bugs e na organização do repositório.
+ 
+- Marco Antonio Pinto Paes Fortes Neto:
+
+ - Contribuição na lógica,esqueletização e na criação do módulo VerificadorDeSenha.py
+- Ajudou na correçào de bugs e na organização do repositório 
+
  
 
  
