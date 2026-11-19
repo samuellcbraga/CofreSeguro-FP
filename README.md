@@ -67,7 +67,7 @@ WIP
 ## Participantes:
 - Artur de Carvalho Lyra (Arcaly)
 - José Guilherme Burégio (santosdecartier)
-- Júlia Melo (Marshmeelo)
+- Júlia de Melo (Marsheemelo)
 - Marco (sem github)
 - Marina Queiroga Cavendish (marinacavendish)
 - Samuel Lins Braga (samuellcbraga)
@@ -85,8 +85,9 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
   - Adicionou o módulo VerificadorDeSenha.py e senhas_comuns.txt;
   - Responsável por organizar e estruturar o verificador de senha usado pelo programa;
   - Limpeza e condensação do verificador de força da senha.
-  
- 
+
+- Júlia de Melo Lopes:
+  - Adicionou o módulo menu.py;
 
  
 
