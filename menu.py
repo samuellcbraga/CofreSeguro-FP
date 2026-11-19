@@ -1,3 +1,4 @@
+import assistente
 import auditoria
 import categorias
 import crud
@@ -20,7 +21,7 @@ def entrada(mensagem: str) -> str:
     texto: str = input(mensagem)
     while ";" in texto:
         print('O caractere ";" não é permitido. Tente de novo.')
-        entrada(mensagem)
+        texto = input(mensagem) #guarda o novo texto, senão o while nunca termina
     return texto
 
 #Igual ao int(input()), mas não deixa o programa quebrar se o usuário digitar letras
@@ -36,7 +37,7 @@ def lerNumero(mensagem: str) -> int:
     texto: str = input(mensagem).strip()
     while not texto.isdigit(): #isdigit() é True só se o texto tiver apenas algarismos
         print("Digite apenas números.")
-        lerNumero(mensagem)
+        texto = input(mensagem).strip() #guarda o novo texto, senão o while nunca termina
     return int(texto)
 
 #Mostra as categorias e retorna o nome da escolhida
@@ -50,7 +51,7 @@ def escolherCategoria() -> str:
     numero: int = lerNumero("Qual a categoria?: ")
     while not 1 <= numero <= len(linhas):
         print("Número inválido.")
-        escolherCategoria()
+        numero = lerNumero("Qual a categoria?: ") #guarda o novo número, senão o while nunca termina
     return linhas[numero - 1].split(";")[0]
 
 def lerExigencia() -> str:
@@ -76,9 +77,7 @@ def entrar():
             except Exception:
                 print("Senha mestra incorreta.")
                 tentativas += 1
-            return False
-
-
+        return False #fora do while: agora são 3 tentativas de verdade
 
     print("Primeira execução: crie sua senha mestra.")
     senha1 = input("Nova senha mestra: ")
@@ -87,8 +86,8 @@ def entrar():
             print("As senhas não conferem. Tente de novo.")
             senha1 = input("Nova senha mestra: ")
             senha2 = input("Repita a senha mestra: ")
-            cofre.definirSenha(senha1)
-            crud.gravarLinhas([])
+    cofre.definirSenha(senha1) #fora do while: sempre guarda a senha, mesmo acertando de primeira
+    crud.gravarLinhas([])
     return True
 
 if not entrar():
@@ -152,7 +151,10 @@ while True:
                     #criptografa a senha aqui
                     
                     #avisa se a senha ta sendo usada em outro canto
-                    usadas = risco.servicosComMesmaSenha(senha)
+                    usadas = []
+                    for servicoUsado in risco.servicosComMesmaSenha(nova_senha):
+                        if servicoUsado != servicoAntigo: #n avisa sobre o próprio registro que está sendo editado
+                            usadas.append(servicoUsado)
                     if usadas:
                         print("Atenção! Essa senha já é usada em: " + ", ".join(usadas))
 
@@ -173,7 +175,7 @@ while True:
             else:
                 print("Número inválido.")
         case 5:
-            print("WIP")
+            assistente.perguntar()
         case 6:
             crud.ultimoCadastro()
         case 7:
@@ -195,6 +197,9 @@ while True:
             categorias.listar()
             if input("Deseja cadastrar uma categoria ou alterar uma exigência? (s/n): ").strip().lower() == "s":
                 nome: str = entrada("Nome da categoria: ").strip().lower()
+                while not categorias.nomeValido(nome):
+                    print("Use só letras e espaços (até 20 caracteres).")
+                    nome = entrada("Nome da categoria: ").strip().lower()
                 categorias.cadastrar(nome, lerExigencia())
         case 9:
             print("Obrigado por usar nosso gerenciador de senhas!")
