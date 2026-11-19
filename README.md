@@ -85,7 +85,12 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
   - Adicionou o módulo VerificadorDeSenha.py e senhas_comuns.txt;
   - Responsável por organizar e estruturar o verificador de senha usado pelo programa;
   - Limpeza e condensação do verificador de força da senha.
-  
+
+- Marina Cavendish:
+  - Implementou a detecção de risco (risco.py): alerta de senhas repetidas entre serviços, aviso ao cadastrar uma senha já usada e relatório de segurança (total de credenciais, fracas, comuns, repetidas e dias desde a última alteração);
+  - Implementou o registro de auditoria (auditoria.py): log de cadastro, edição, exclusão e revelação de senha (operação, serviço, data e hora), consultável pelo menu;
+  - Integrou a senha mestra e o cofre criptografado (cofre.py) ao fluxo de entrada do programa, com limite de tentativas;
+  - Integrou os módulos no menu principal e corrigiu erros encontrados durante a integração.
  
 
  
