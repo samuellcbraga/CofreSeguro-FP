@@ -116,7 +116,9 @@ Tarefas foram divididas conforme requisitos exigidos pela cadeira, com exceção
 - José Guilherme Burégio: 
   - Adicionou o módulo VerificadorDeSenha.py e senhas_comuns.txt;
   - Responsável por organizar e estruturar o verificador de senha usado pelo programa;
-  - Limpeza e condensação do verificador de força da senha.
+  - Limpeza e condensação do verificador de força da senha;
+  - Responsável pelo sistema de pontuação no verificador de força;
+  - Correção de bugs no VerificadorDeSenha.py
 
 - Júlia de Melo Lopes:
   - Adicionou o módulo menu.py;
