@@ -166,10 +166,10 @@ while True:
             crud.listar()
             linhas_removiveis: list[str] = crud.lerLinhas()
             numero_removido: int = lerNumero("Qual o número do registro que deseja excluir?: ")
-            if 1 <= numero <= len(linhas_removiveis):
+            if 1 <= numero_removido <= len(linhas_removiveis):
                 servicoRemovido: str = linhas_removiveis[numero_removido - 1].split(";")[0] #pega o nome antes de excluir
                 crud.excluir(linhas_removiveis[numero_removido - 1])
-                auditoria.registrar("EXCLUSÃO", servico)
+                auditoria.registrar("EXCLUSÃO", servicoRemovido)
             else:
                 print("Número inválido.")
         case 5:

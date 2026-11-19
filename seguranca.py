@@ -47,11 +47,13 @@ def criptografar(plaintext: bytes, passphrase: str, is_slow: bool = False) -> by
 
     salt, nonce = os.urandom(16), os.urandom(12)
     if is_slow:
-        slow_header: bytes = HEADER.pack(is_slow, salt, nonce, b';;')
+        indicador: bytes = b';;'
+        slow_header: bytes = HEADER.pack(is_slow, salt, nonce, indicador)
         key: bytes = _derivar_chave(passphrase, salt, is_slow)
         return slow_header + AESGCM(key).encrypt(nonce, plaintext, slow_header)
     else:
-        header: bytes = HEADER.pack(is_slow, salt, nonce, str({plaintext})[:-2])
+        trecho_senha: bytes = plaintext[:-2]
+        header: bytes = HEADER.pack(is_slow, salt, nonce, trecho_senha[:-2])
         key = _derivar_chave(passphrase, salt, is_slow)
         return header + AESGCM(key).encrypt(nonce, plaintext, header)
 
